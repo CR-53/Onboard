@@ -1,0 +1,22 @@
+.footer {
+    margin-top: 40px; 
+    width: 100%;
+    background-color: #34495ed6 !important;
+    padding: 20px !important;
+}
+
+.footer-text {
+    margin-bottom: 0px;
+    margin-top: 20px;
+    font-size: 14px;
+    color: #ffffff;
+}
+
+.footer-link {
+    color: #f1c40f;
+    font-size: 18px;
+}
+
+.footer-link-text {
+    font-family: 'Roboto Slab', serif;
+}

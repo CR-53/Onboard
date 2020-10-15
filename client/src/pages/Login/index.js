@@ -74,7 +74,7 @@ class Login extends React.Component {
             return (
                 <div className="app">
                     <div className="container">
-                        Loading, please wait...
+                        <h3>Loading, please wait...</h3>
                     </div>
                 </div>
             )
@@ -86,7 +86,7 @@ class Login extends React.Component {
                 return (
                     <div className="app">
                         <div className="container">
-                            Welcome {UserStore.username}
+                            <h3>Welcome, <span className="username">{UserStore.username}</span>!</h3>
                             
                             <a href="/"><SubmitButton
                                 text={"Log out"}

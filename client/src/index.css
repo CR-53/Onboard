@@ -1,5 +1,90 @@
+p, h1, h2, h3, h4, h5, h6 {
+  color: #ffffff;
+  font-family: 'Open Sans', sans-serif;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+#container {
+  min-height: 100%;
+  position: relative;
+}
+
 body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
+  background: rgb(21,28,65);
+  background: linear-gradient(27deg, rgba(21,28,65,1) 0%, rgba(36,52,78,1) 78%, rgba(35,51,78,1) 100%);
+}
+
+.root {
+  padding: 10px;
+  padding-bottom: 100px;
+}
+
+.username {
+  color: #03dba7 !important
+}
+
+a {
+  color: #03dba7 !important;
+}
+
+a:hover {
+  cursor: pointer;
+  color: darkorange;
+}
+
+/* === SECTION CSS === */
+
+.section-heading {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.section-hr {
+  border-color: #dfdddd;
+  border-top-width: 2px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 15px;
+  margin-bottom: 45px;
+  width: 100%;
+  max-width: 170px;
+}
+
+.first-section {
+  margin-top: 4rem;
+  margin-bottom: 6rem;
+}
+
+.new-section {
+  margin-top: 6rem;
+  margin-bottom: 6rem;
+}
+
+.center-wrap {
+  text-align: center;
+}
+
+.new-board-btn {
+  text-align: center;
+  margin: auto;
+}
+
+.btn-background {
+  background: rgb(11,15,37) !important;
+  background: linear-gradient(to right,#2176ca, #185591) !important;
+  max-width: 100px;
+  margin: auto;
+  text-align: center;
+}
+
+.submitButton {
+  text-align: center;
 }

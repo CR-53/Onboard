@@ -54,7 +54,7 @@ class Navigation extends React.Component {
                     <Nav className="ml-auto">
                         <Nav.Link as={Link} to="/new-board">Create a board</Nav.Link>
                         <Dropdown>
-                            <Dropdown.Toggle id="login-dropdown">
+                            <Dropdown.Toggle className="btn-background" id="login-dropdown">
                                 <FontAwesomeIcon icon="user" /> {UserStore.username}
                             </Dropdown.Toggle>
                             <Dropdown.Menu className="dropdown-menu-loggedin">
@@ -73,7 +73,7 @@ class Navigation extends React.Component {
                     <Nav className="ml-auto">
                         <Nav.Link as={Link} to="/new-board">Create a board</Nav.Link>
                         <Dropdown>
-                            <Dropdown.Toggle id="login-dropdown">
+                            <Dropdown.Toggle className="btn-background" id="login-dropdown">
                                 <FontAwesomeIcon icon="user" />
                             </Dropdown.Toggle>
                             <Dropdown.Menu className="dropdown-menu-loggedout">

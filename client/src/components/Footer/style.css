@@ -1,19 +1,21 @@
 .footer {
     margin-top: 40px; 
     width: 100%;
-    background-color: #34495ed6 !important;
+    background: rgb(11,28,43);
+    background: linear-gradient(5deg, rgba(11,28,43,1) 0%, rgba(10,37,62,1) 56%, rgba(10,37,62,1) 100%);
     padding: 20px !important;
+    position: absolute;
+    bottom: 0;
+    height: 100px;
 }
 
 .footer-text {
-    margin-bottom: 0px;
-    margin-top: 20px;
     font-size: 14px;
     color: #ffffff;
 }
 
 .footer-link {
-    color: #f1c40f;
+    color: #03dba7 !important;
     font-size: 18px;
 }
 

@@ -11,8 +11,8 @@ class NewBoard extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            projectName: '',
-            projectDescription: '',
+            title: '',
+            description: '',
             owner: ''
         }
     }
@@ -74,64 +74,17 @@ class NewBoard extends React.Component {
 
     resetForm() {
         this.setState({
-            projectName: '',
-            projectDescription: ''
+            title: '',
+            description: ''
         })
     }
 
-    // async saveNewBoard() {
-    //     if (!this.state.projectName) {
-    //         console.log(`no project name`)
-    //         return;
-    //     }
-    //     if (!this.state.projectDescription) {
-    //         console.log(`no project description`)
-    //         return;
-    //     }
-    //     if (!this.state.owner) {
-    //         console.log(UserStore.username)
-    //         console.log(`no owner - user is not logged in`)
-    //         return;
-    //     }
-
-    //     try {
-    //         let res = await fetch('/newboard', {
-    //             method: 'post',
-    //             headers: {
-    //                 'Accept': 'application/json',
-    //                 'Content-Type': 'application/json'
-    //             },
-    //             body: JSON.stringify({
-    //                 projectName: this.state.projectName,
-    //                 projectDescription: this.state.projectDescription,
-    //                 owner: this.state.owner
-    //             })
-    //         });
-
-    //         let result = await res.json();
-    //         if (result && result.success) {
-    //             console.log(`new board created`);
-    //             // let newBoardLink = 'add board page id here';
-    //             // window.location.href=`/${newBoardLink}`
-    //         }
-
-    //         else if (result && result.success === false) {
-    //             console.log(`an error occured`)
-    //         }
-    //     }
-
-    //     catch(e) {
-    //         console.log(e);
-    //         this.resetForm();
-    //     }
-    // }
-
     async saveNewBoard() {
-        if (!this.state.projectName) {
+        if (!this.state.title) {
             console.log(`no project name`)
             return;
         }
-        if (!this.state.projectDescription) {
+        if (!this.state.description) {
             console.log(`no project description`)
             return;
         }
@@ -141,11 +94,11 @@ class NewBoard extends React.Component {
             return;
         }
         API.saveBoard({
-            projectName: this.state.projectName,
-            projectDescription: this.state.projectDescription,
+            title: this.state.title,
+            description: this.state.description,
             owner: this.state.owner
           })
-            .then(() => console.log(`new board created ` + this.state.projectName + " | " + this.state.projectDescription + " | " + this.state.owner ))
+            .then(() => console.log(`new board created: ` + this.state.title + " | " + this.state.descirption + " | " + this.state.owner ))
             .then(() => this.resetForm())
             .catch(err => console.log(err));
     }
@@ -153,24 +106,22 @@ class NewBoard extends React.Component {
     render() {
         return (
             <div className="container">
-                <div className="row">
+                <div className="row first-section">
                     <div className="col-md-12">
-                        <h2 className="page-heading">Create a new feedback board</h2>
+                        <h3 className="section-heading">Create a new feedback board</h3>
                     </div>
-                </div>
-                <div className="row">
                     <div className="col-md-12">
                         <InputField 
                             type='text'
                             placeholder="Enter your project name"
-                            value={this.state.projectName}
-                            onChange={ (nameVal) => this.setInputValueName('projectName', nameVal) }
+                            value={this.state.title}
+                            onChange={ (nameVal) => this.setInputValueName('title', nameVal) }
                         />
                         <InputField
                             type='textarea'
                             placeholder="Enter a short description of your project"
-                            value={this.state.projectDescription}
-                            onChange={ (descriptionVal) => this.setInputValueDescription('projectDescription', descriptionVal) }
+                            value={this.state.description}
+                            onChange={ (descriptionVal) => this.setInputValueDescription('description', descriptionVal) }
                         />
                         <SubmitButton
                             text="Create"

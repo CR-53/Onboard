@@ -1,38 +1,14 @@
-/* === SECTION CSS === */
-
-.section-heading {
-    text-align: center;
-    margin-bottom: 10px;
+.card {
+    background: rgb(11,15,37);
+    background: linear-gradient(to right,#2176ca, #185591);
+    /* border-color: #70c989; */
+    border-width: 3px;
+    border-style: solid;
+    border-radius: 10px;
 }
 
-.section-hr {
-    border-color: #dfdddd;
-    border-top-width: 1px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 15px;
-    margin-bottom: 45px;
-    width: 100%;
-    max-width: 170px;
-}
-
-.first-section {
-    margin-top: 4rem;
-    margin-bottom: 6rem;
-}
-
-.new-section {
-    margin-top: 6rem;
-    margin-bottom: 6rem;
-}
-
-.center-wrap {
-    text-align: center;
-}
-
-.new-board-btn {
-    text-align: center;
-    margin: auto;
+.card-body {
+    padding: 2rem;
 }
 
 .home-card {
@@ -40,13 +16,17 @@
 }
 
 .card-icon {
-    font-size: 50px !important;
+    font-size: 56px !important;
+    color: #ffffff;
 }
 
 .card-title { 
-    font-size: 20px;
+    font-size: 22px;
+    color: #ffffff;
+    margin-bottom: 20px;
 }
 
 .card-text {
     font-size: 16px;
 }
+

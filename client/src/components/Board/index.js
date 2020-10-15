@@ -1,23 +1,30 @@
 import React from "react";
 import "./style.css";
 import { observer } from "mobx-react";
+import UserStore from "../../stores/UserStore";
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import InputField from "./InputField";
-import SubmitButton from "./SubmitButton";
+import InputField from "../InputField";
+import SubmitButton from "../SubmitButton";
+import { BrowserRouter as useParams } from "react-router-dom";
+  
 
 class Board extends React.Component {
+
+    // params = useParams();
 
     constructor(props) {
         super(props);
         this.state = {
-            newSuggestionTitle: '',
-            newSuggestionText: '',
-            suggestionOwner: '',
-            buttonDisabled: false,
+            title: '',
+            description: '',
+            owner: '',
+            buttonDisabled: false
         }
     }
 
     async componentDidMount() {
+        // let params = useParams();
+        // console.log(params)
         try {
             let res = await fetch('/isLoggedIn', {
                 method: 'post',
@@ -26,9 +33,9 @@ class Board extends React.Component {
                     'Content-Type': 'application/json'
                 }
             })
-    
+
             let result = await res.json();
-    
+
             if (result && result.success) {
                 UserStore.loading = false;
                 UserStore.isLoggedIn = true;
@@ -36,22 +43,24 @@ class Board extends React.Component {
                 this.setState({
                     owner: UserStore.username
                 })
+                let params = useParams();
+                console.log(params)
                 console.log(`username = ` + UserStore.username)
                 console.log(`owner = ` + this.state.owner)
             }
-    
+
             else {
                 UserStore.loading = false;
                 UserStore.isLoggedIn = false;
             }
-            
+
         }
-    
+
         catch (e) {
             UserStore.loading = false;
             UserStore.isLoggedIn = false;
         }
-      }
+    }
 
     setInputValueSuggestionTitle(property, titleVal) {
         if (titleVal.length > 100) {
@@ -73,15 +82,19 @@ class Board extends React.Component {
 
     resetNewSuggestionField() {
         this.setState({
-            newSuggestionTitle: '',
-            newSuggestionText: '',
+            title: '',
+            description: '',
             buttonDisabled: false
         })
     }
 
     async doNewSuggestion() {
-        if (!this.state.newSuggestion) {
+        if (!this.state.title) {
             console.log(`no suggestion text`)
+            return;
+        }
+        if (!this.state.description) {
+            console.log(`no suggestion description`)
             return;
         }
         if (!this.state.owner) {
@@ -98,7 +111,7 @@ class Board extends React.Component {
             <div className="container">
                 <div className="row">
                     <div className="col-md-12">
-                        <h3>insert board name here</h3> 
+                        <h3>insert board name here</h3>
                     </div>
                     <div className="col-md-12">
                         <p>insert board description here</p>
@@ -110,22 +123,22 @@ class Board extends React.Component {
                     </div>
                 </div>
                 <div className="row">
-                    <InputField 
+                    <InputField
                         type='text'
                         placeholder="Give your suggestion a name"
-                        value={this.state.newSuggestionTitle}
-                        onChange={ (titleVal) => this.setInputValueSuggestionTitle('newSuggestionTitle', titleVal) }
+                        value={this.state.title}
+                        onChange={(titleVal) => this.setInputValueSuggestionTitle('title', titleVal)}
                     ></InputField>
-                    <InputField 
+                    <InputField
                         type='textarea'
                         placeholder="Details"
-                        value={this.state.newSuggestionText}
-                        onChange={ (textVal) => this.setInputValueSuggestionText('newSuggestionText', textVal) }
+                        value={this.state.description}
+                        onChange={(textVal) => this.setInputValueSuggestionText('description', textVal)}
                     ></InputField>
-                    <SubmitButton 
+                    <SubmitButton
                         text="Submit"
                         disabled={this.state.buttonDisabled}
-                        onClick={ () => this.doNewSuggestion() }
+                        onClick={() => this.doNewSuggestion()}
                     ></SubmitButton>
                 </div>
             </div>

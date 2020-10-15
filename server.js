@@ -20,7 +20,7 @@ if (process.env.NODE_ENV === "production") {
   // change to "client/build"
 }
 
-// Connect to MySQL DB
+// Connect to MySQL DB for user database
 const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
@@ -53,6 +53,7 @@ app.use(session({
     httpOnly: false
   }
 }));
+
 new Router(app, db);
 // Send every other request to the React app
 

@@ -10,12 +10,13 @@ import Signup from './pages/Signup'
 import Success from './pages/Success'
 import Home from './pages/Home'
 import { observer } from "mobx-react";
-import UserStore from "./stores/UserStore";import { library } from '@fortawesome/fontawesome-svg-core'
+import UserStore from "./stores/UserStore";
+import { library } from '@fortawesome/fontawesome-svg-core'
 import { fab } from '@fortawesome/free-brands-svg-icons'
 import { faChartLine, faComments, faPencilRuler, faUser } from '@fortawesome/free-solid-svg-icons'
+import Board from "./components/Board";
 
 library.add(fab, faChartLine, faComments, faPencilRuler, faUser )
-
 
 class App extends React.Component {
 
@@ -91,6 +92,7 @@ class App extends React.Component {
             <Route exact path="/login" component={Login} />
             <Route exact path="/signup" component={Signup} />
             <Route exact path="/success" component={Success} />
+            <Route exact path="/board/:id" component={Board} />
           </Wrapper>
           <Footer />
         </div>

@@ -72,7 +72,7 @@ class Home extends React.Component {
                             <h3 className="section-heading">Search for a feedback board</h3>
                             <hr className="section-hr"></hr>
                             <div className="center-wrap">
-                                <a href="/new-board"><Button className="new-board-btn">Search</Button></a>
+                                <a href="/new-board"><Button className="new-board-btn btn-background">Search</Button></a>
                             </div>
                         </div>
                     </div>
@@ -81,7 +81,7 @@ class Home extends React.Component {
                             <h3 className="section-heading">Ready to get more intune with your users?</h3>
                             <hr className="section-hr"></hr>
                             <div className="center-wrap">
-                                <a href="/new-board"><Button className="new-board-btn">Create a new board</Button></a>
+                                <a href="/new-board"><Button className="new-board-btn btn-background">Create a new board</Button></a>
                             </div>
                         </div>
                     </div>

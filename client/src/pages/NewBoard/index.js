@@ -1,14 +1,14 @@
 import React from "react";
 import "./style.css";
-import { Form, Button} from 'react-bootstrap';
 import UserStore from "../../stores/UserStore";
 import InputField from "../../components/InputField";
 import SubmitButton from "../../components/SubmitButton";
 import { observer } from "mobx-react";
+import API from "../../utils/API";
 
 class NewBoard extends React.Component {
 
-    constructor(props, ) {
+    constructor(props) {
         super(props);
         this.state = {
             projectName: '',
@@ -79,7 +79,54 @@ class NewBoard extends React.Component {
         })
     }
 
-    async doNewBoard() {
+    // async saveNewBoard() {
+    //     if (!this.state.projectName) {
+    //         console.log(`no project name`)
+    //         return;
+    //     }
+    //     if (!this.state.projectDescription) {
+    //         console.log(`no project description`)
+    //         return;
+    //     }
+    //     if (!this.state.owner) {
+    //         console.log(UserStore.username)
+    //         console.log(`no owner - user is not logged in`)
+    //         return;
+    //     }
+
+    //     try {
+    //         let res = await fetch('/newboard', {
+    //             method: 'post',
+    //             headers: {
+    //                 'Accept': 'application/json',
+    //                 'Content-Type': 'application/json'
+    //             },
+    //             body: JSON.stringify({
+    //                 projectName: this.state.projectName,
+    //                 projectDescription: this.state.projectDescription,
+    //                 owner: this.state.owner
+    //             })
+    //         });
+
+    //         let result = await res.json();
+    //         if (result && result.success) {
+    //             console.log(`new board created`);
+    //             // let newBoardLink = 'add board page id here';
+    //             // window.location.href=`/${newBoardLink}`
+    //         }
+
+    //         else if (result && result.success === false) {
+    //             console.log(`an error occured`)
+    //         }
+    //     }
+
+    //     catch(e) {
+    //         console.log(e);
+    //         this.resetForm();
+    //     }
+    // }
+
+    async saveNewBoard() {
         if (!this.state.projectName) {
             console.log(`no project name`)
             return;
@@ -93,37 +140,14 @@ class NewBoard extends React.Component {
             console.log(`no owner - user is not logged in`)
             return;
         }
-
-        try {
-            let res = await fetch('/newboard', {
-                method: 'post',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    projectName: this.state.projectName,
-                    projectDescription: this.state.projectDescription,
-                    owner: this.state.owner
-                })
-            });
-
-            let result = await res.json();
-            if (result && result.success) {
-                console.log(`new board created`);
-                let newBoardLink = 'add board page id here';
-                window.location.href=`/${newBoardLink}`
-            }
-
-            else if (result && result.success === false) {
-                console.log(`an error occured`)
-            }
-        }
-
-        catch(e) {
-            console.log(e);
-            this.resetForm();
-        }
+        API.saveBoard({
+            projectName: this.state.projectName,
+            projectDescription: this.state.projectDescription,
+            owner: this.state.owner
+          })
+            .then(() => console.log(`new board created ` + this.state.projectName + " | " + this.state.projectDescription + " | " + this.state.owner ))
+            .then(() => this.resetForm())
+            .catch(err => console.log(err));
     }
 
     render() {
@@ -131,7 +155,7 @@ class NewBoard extends React.Component {
             <div className="container">
                 <div className="row">
                     <div className="col-md-12">
-                        <h2 className="page-heading">Create a New Project Feedback Board</h2>
+                        <h2 className="page-heading">Create a new feedback board</h2>
                     </div>
                 </div>
                 <div className="row">
@@ -150,7 +174,7 @@ class NewBoard extends React.Component {
                         />
                         <SubmitButton
                             text="Create"
-                            onClick={ () => this.doNewBoard() }
+                            onClick={ () => this.saveNewBoard() }
                         />
                     </div>
                 </div>

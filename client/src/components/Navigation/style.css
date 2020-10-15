@@ -17,7 +17,7 @@
 
 .navbar-nav a {
     color: #22b999 !important; /* Changes the colour of the nav links to match the logo colour. Use of important override bootstrap CSS*/
-    font-size: 22px;
+    font-size: 20px;
     margin-right: 24px; /* Indenting the Navbar Links on the right side of the page. Indentation matches the left side of the logo */
 }
 
@@ -26,7 +26,22 @@ a:hover {
     text-decoration: none;
 }
 
-
 .logo {
-        height: 60px; 
+    height: 60px; 
+}
+
+.dropdown-nav-item {
+    font-size: 16px !important;
+}
+
+.dropdown-menu-loggedout {
+    width: 100px !important;
+    min-width: 100px !important;
+    left: -44px !important;
+}
+
+.dropdown-menu-loggedin {
+    width: 100px !important;
+    min-width: 100px !important;
+    left: 18px !important;
 }

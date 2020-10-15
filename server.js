@@ -1,25 +1,24 @@
 const express = require("express");
 const path = require("path");
 const mongoose = require("mongoose");
-const mysql = require('mysql');
-const session = require('express-session');
-const MySQLStore = require('express-mysql-session')(session);
-const Router = require('./config/Router');
+const mysql = require("mysql");
+const session = require("express-session");
+const MySQLStore = require("express-mysql-session")(session);
+const Router = require("./config/Router");
+const routes = require("./routes");
+// const apiRoutes = require("./routes/apiRoutes");
 
 const PORT = process.env.PORT || 3001;
 const app = express();
 
-// const apiRoures = require("./routes/apiRoutes");
 // Define middleware here
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 // Serve up static assets (usually on heroku)
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static("client/build"));
+  app.use(express.static("client/public"));
+  // change to "client/build"
 }
-
-// Define API routes here
-
 
 // Connect to MySQL DB
 const db = mysql.createConnection({
@@ -32,8 +31,8 @@ const db = mysql.createConnection({
 db.connect(function(err) {
   if (err) {
     console.log(`DB error`);
-      throw err;
-      return false;
+    throw err;
+    return false;
   }
 });
 
@@ -54,6 +53,8 @@ app.use(session({
     httpOnly: false
   }
 }));
+new Router(app, db);
+// Send every other request to the React app
 
 // Connect to the Mongo DB
 mongoose.connect(
@@ -61,11 +62,12 @@ mongoose.connect(
   { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true }
   );
   
-new Router(app, db);
-// Send every other request to the React app
+// Define routes here
+app.use(routes);
 
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "./client/build/index.html"));
+  res.sendFile(path.join(__dirname, "./client/public/index.html"));
+    // change to "client/build/index.html"
 });
 
 app.listen(PORT, () => {

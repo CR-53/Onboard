@@ -105,69 +105,61 @@ class Router {
                 }
                 else {
                     db.query('INSERT INTO user SET ?',
-                    {
-                        username: username,
-                        password: password
-                    },
-                    (err, data, fields) => {
-                        if (err) {
-                            res.json({
-                                success: false,
-                                msg: '4) An error occured, please try again.'
-                            });
-                            return;
-                        } else {
-                            res.json({
-                                success: true,
-                                msg: 'new user regisered'
-                            })
+                        {
+                            username: username,
+                            password: password
+                        },
+                        (err, data, fields) => {
+                            if (err) {
+                                res.json({
+                                    success: false,
+                                    msg: '4) An error occured, please try again.'
+                                });
+                                return;
+                            } else {
+                                res.json({
+                                    success: true,
+                                    msg: 'new user regisered'
+                                })
 
-                            
-                            
-                            let cols = [username];
-db.query('SELECT * FROM user WHERE username = ? LIMIT 1', cols, (err, data, fields) => {
-    if (err) {
-        res.json({
-            success: false,
-            msg: 'An error occured, please try again.'
-        });
-        return;
-    }
-    // Found 1 user with this username
-    if (data && data.length === 1) {
+                                let cols = [username];
+                                db.query('SELECT * FROM user WHERE username = ? LIMIT 1', cols, (err, data, fields) => {
+                                    if (err) {
+                                        res.json({
+                                            success: false,
+                                            msg: 'An error occured, please try again.'
+                                        });
+                                        return;
+                                    }
+                                    // Found 1 user with this username
+                                    if (data && data.length === 1) {
 
-        bcrypt.compare(password, data[0].password, (bcryptErr, verified) => {
-            if (verified) {
-                req.session.userID = data[0].id;
+                                        bcrypt.compare(password, data[0].password, (bcryptErr, verified) => {
+                                            if (verified) {
+                                                req.session.userID = data[0].id;
 
-                res.json({
-                    success: true,
-                    username: data[0].username
-                })
-                return;
-            }
+                                                res.json({
+                                                    success: true,
+                                                    username: data[0].username
+                                                })
+                                                return;
+                                            }
 
-            else {
-                res.json({
-                    success: false,
-                    msg: 'Invalid password'
-                })
-            }
-        });
+                                            else {
+                                                res.json({
+                                                    success: false,
+                                                    msg: 'Invalid password'
+                                                })
+                                            }
+                                        });
 
-    }
+                                    }
 
-})
+                                })
 
+                            }
 
-
-
-
-
-
-                        }
-
-                    });
+                        });
 
                 };
             })
@@ -229,6 +221,5 @@ db.query('SELECT * FROM user WHERE username = ? LIMIT 1', cols, (err, data, fiel
     }
 
 }
-
 
 module.exports = Router;

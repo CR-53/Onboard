@@ -14,7 +14,6 @@ class SubmitButton extends React.Component {
                 >
                     {this.props.text}
                 </button>
-
             </div>
         )
     }

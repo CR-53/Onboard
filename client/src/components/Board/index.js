@@ -1,20 +1,26 @@
 import React from "react";
 import "./style.css";
-import { observer } from "mobx-react";
 import UserStore from "../../stores/UserStore";
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import InputField from "../InputField";
 import SubmitButton from "../SubmitButton";
-import { BrowserRouter as useParams } from "react-router-dom";
-  
+// import { BrowserRouter as useParams } from "react-router-dom";
+import { withRouter } from "react-router";
+import API from "../../utils/API";
+
 
 class Board extends React.Component {
-
-    // params = useParams();
 
     constructor(props) {
         super(props);
         this.state = {
+            // page loading
+            loading: true,
+            // board data
+            boardTitle: '',
+            boardDescription: '',
+            boardOwner: '',
+            // suggestion data
             title: '',
             description: '',
             owner: '',
@@ -22,9 +28,8 @@ class Board extends React.Component {
         }
     }
 
+
     async componentDidMount() {
-        // let params = useParams();
-        // console.log(params)
         try {
             let res = await fetch('/isLoggedIn', {
                 method: 'post',
@@ -43,8 +48,6 @@ class Board extends React.Component {
                 this.setState({
                     owner: UserStore.username
                 })
-                let params = useParams();
-                console.log(params)
                 console.log(`username = ` + UserStore.username)
                 console.log(`owner = ` + this.state.owner)
             }
@@ -52,8 +55,28 @@ class Board extends React.Component {
             else {
                 UserStore.loading = false;
                 UserStore.isLoggedIn = false;
+                console.log(`user is not logged in`)
             }
-
+            // let params = useParams()
+            // console.log(`params = ` + params )
+            const slug = this.props.match.params.id;
+            console.log(slug);
+            API.getBoards().then(res => {
+                res.data.forEach(board => {
+                    if (slug === board.slug) {
+                        console.log(`match found!`)
+                        this.setState({
+                            loading: false,
+                            boardTitle: board.title,
+                            boardDescription: board.description,
+                            boardOwner: board.owner
+                        })
+                    }
+                })
+            })
+            this.setState({
+                loading: false
+            })
         }
 
         catch (e) {
@@ -107,45 +130,72 @@ class Board extends React.Component {
     }
 
     render() {
-        return (
-            <div className="container">
-                <div className="row">
-                    <div className="col-md-12">
-                        <h3>insert board name here</h3>
-                    </div>
-                    <div className="col-md-12">
-                        <p>insert board description here</p>
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col-md-12">
-                        <p>insert suggestions here</p>
-                    </div>
-                </div>
-                <div className="row">
-                    <InputField
-                        type='text'
-                        placeholder="Give your suggestion a name"
-                        value={this.state.title}
-                        onChange={(titleVal) => this.setInputValueSuggestionTitle('title', titleVal)}
-                    ></InputField>
-                    <InputField
-                        type='textarea'
-                        placeholder="Details"
-                        value={this.state.description}
-                        onChange={(textVal) => this.setInputValueSuggestionText('description', textVal)}
-                    ></InputField>
-                    <SubmitButton
-                        text="Submit"
-                        disabled={this.state.buttonDisabled}
-                        onClick={() => this.doNewSuggestion()}
-                    ></SubmitButton>
-                </div>
-            </div>
-        )
 
+        if (this.state.loading === true) {
+            
+            return (
+                <div>
+                    <h3>Loading, please wait...</h3>
+                </div>
+            )
+
+        }
+
+        else {
+
+            if (!this.state.boardTitle) {
+
+                return (
+                    <div>
+                        <h3>Could not find board at this location, please check URL and try again</h3>
+                    </div>
+                )
+    
+            }
+
+            else {
+    
+                return (
+                    <div className="container">
+                        <div className="row">
+                            <div className="col-md-12">
+                                <h3>{this.state.boardTitle}</h3>
+                            </div>
+                            <div className="col-md-12">
+                                <p>{this.state.boardDescription}</p>
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col-md-12">
+                                <p>insert suggestions here</p>
+                            </div>
+                        </div>
+                        <InputField
+                            type='text'
+                            placeholder="Give your suggestion a name"
+                            value={this.state.title}
+                            onChange={(titleVal) => this.setInputValueSuggestionTitle('title', titleVal)}
+                        ></InputField>
+                        <InputField
+                            type='textarea'
+                            placeholder="Details"
+                            value={this.state.description}
+                            onChange={(textVal) => this.setInputValueSuggestionText('description', textVal)}
+                        ></InputField>
+                        <SubmitButton
+                            text="Submit"
+                            disabled={this.state.buttonDisabled}
+                            onClick={() => this.doNewSuggestion()}
+                        ></SubmitButton>
+                    </div>
+                )
+    
+            }
+    
+        }
+        
     }
 
 }
 
-export default observer(Board);
+export default withRouter(Board);

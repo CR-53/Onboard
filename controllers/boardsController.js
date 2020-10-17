@@ -10,6 +10,12 @@ module.exports = {
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   },
+  findBySlug: function(req, res) {
+    db.Board
+      .findOne(req.query)
+      .then(res => console.log(res))
+      .catch(err => res.status(422).json(errr));
+  },
   // find specific board by ID
   findById: function(req, res) {
     db.Board

@@ -12,6 +12,9 @@ const boardSchema = new mongoose.Schema({
   },
   owner: {
     type: String,
+  },
+  slug: {
+    type: String,
   }
 });
 

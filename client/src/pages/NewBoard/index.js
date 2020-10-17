@@ -11,9 +11,12 @@ class NewBoard extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            // board data
             title: '',
             description: '',
-            owner: ''
+            owner: '',
+            // number to add to slug if not unique
+            checkNumber: 0
         }
     }
 
@@ -36,23 +39,20 @@ class NewBoard extends React.Component {
                 this.setState({
                     owner: UserStore.username
                 })
-                console.log(`username = ` + UserStore.username)
-                console.log(`owner = ` + this.state.owner)
             }
     
             else {
                 UserStore.loading = false;
                 UserStore.isLoggedIn = false;
             }
-            
+
         }
     
         catch (e) {
             UserStore.loading = false;
             UserStore.isLoggedIn = false;
         }
-      }
-
+    }
 
     setInputValueName(property, nameVal) {
         if (nameVal.length > 30) {
@@ -79,26 +79,48 @@ class NewBoard extends React.Component {
         })
     }
 
+    // checks if slug already exists in database, if so adds a number to the end to make it unique
+    async slugCheck(slug) {
+        var updateCheckNumber = this.state.checkNumber + 1;
+        this.setState({
+            checkNumber: updateCheckNumber
+        })
+        API.getBoards().then(res => {
+            res.data.forEach(board => {
+                if (slug === board.slug) {
+                    slug = slug + this.state.checkNumber;
+                    console.log(`slug after added number = ` + slug)
+                    this.slugCheck();
+                }
+            })
+        })
+    }
+
     async saveNewBoard() {
         if (!this.state.title) {
             console.log(`no project name`)
-            return;
+            return
         }
         if (!this.state.description) {
             console.log(`no project description`)
             return;
         }
         if (!this.state.owner) {
-            console.log(UserStore.username)
             console.log(`no owner - user is not logged in`)
             return;
         }
+        var slug = this.state.title.split(' ').join('-');
+        slug = slug.toLowerCase();
+        await this.slugCheck(slug);
+        // wait until above has been run
+        console.log(`slug after check = ` + slug);
         API.saveBoard({
             title: this.state.title,
             description: this.state.description,
-            owner: this.state.owner
+            owner: this.state.owner,
+            slug: slug
           })
-            .then(() => console.log(`new board created: ` + this.state.title + " | " + this.state.descirption + " | " + this.state.owner ))
+            .then(() => console.log(`new board created: ` + this.state.title + " | " + this.state.description + " | " + this.state.owner + " | " + slug))
             .then(() => this.resetForm())
             .catch(err => console.log(err));
     }

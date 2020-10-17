@@ -1,0 +1,41 @@
+.board-container {
+    border: 2px solid grey;
+    border-radius: 10px;
+    text-align: left;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.board-title {
+    color: #03dba7 !important;
+}
+
+.board-description {
+    font-size: 16px;
+}
+
+ul {
+    padding: 0px;
+}
+
+li {
+    list-style-type: none;
+    color: #ffffff;
+    border: 1px solid grey;
+    display: inline-flex;
+    border-radius: 10px;
+    width: 100%;
+}
+
+.suggestion-title {
+    font-size: 15px;
+}
+
+.suggestion-description {
+    font-size: 13px;
+}
+
+.suggestion-username {
+    color: #03dba7;
+    font-size: 12px;
+}

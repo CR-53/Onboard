@@ -4,6 +4,7 @@ import UserStore from "../../stores/UserStore";
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import InputField from "../InputField";
 import SubmitButton from "../SubmitButton";
+import SortButton from "../SortButton";
 // import { BrowserRouter as useParams } from "react-router-dom";
 import { withRouter } from "react-router";
 import API from "../../utils/API";
@@ -129,13 +130,29 @@ class Board extends React.Component {
         // .catch(err => console.log(err));
     }
 
+    async sortByVotes() {
+        alert(`sort by votes`)
+    }
+
+    async sortByNewst() {
+        alert(`sort by newest`)
+    }
+
+    async movePageToSuggestion() {
+        alert(`move page to suggestion`)
+    }
+
     render() {
 
         if (this.state.loading === true) {
-            
+
             return (
-                <div>
-                    <h3>Loading, please wait...</h3>
+                <div className="container">
+                    <div className="row">
+                        <div className="col-md-12">
+                            <h3>Loading, please wait...</h3>
+                        </div>
+                    </div>
                 </div>
             )
 
@@ -146,54 +163,94 @@ class Board extends React.Component {
             if (!this.state.boardTitle) {
 
                 return (
-                    <div>
-                        <h3>Could not find board at this location, please check URL and try again</h3>
-                    </div>
-                )
-    
-            }
-
-            else {
-    
-                return (
                     <div className="container">
                         <div className="row">
                             <div className="col-md-12">
-                                <h3>{this.state.boardTitle}</h3>
+                                <h3>Could not find board at this location, please check URL and try again</h3>
+                            </div>
+                        </div>
+                    </div>
+                )
+
+            }
+
+            else {
+
+                return (
+                    <div className="container board-container">
+                        <div className="row">
+                            <div className="col-md-12">
+                                <h3 className="board-heading">Provide suggestions for <span className="board-title">{this.state.boardTitle}</span></h3>
                             </div>
                             <div className="col-md-12">
-                                <p>{this.state.boardDescription}</p>
+                                <p className="board-description">{this.state.boardDescription}</p>
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col-lg-2">
+                                <SortButton 
+                                        text="Most voted"
+                                        onClick={() => this.sortByVotes()}
+                                ></SortButton>
+                            </div>
+                            <div className="col-lg-2">
+                                <SortButton
+                                        text="Newest"
+                                        onClick={() => this.sortByNewest()}
+                                ></SortButton>
+                            </div>
+                            <div className="col-lg-4">
+                                <SubmitButton
+                                        text="Make a suggestion"
+                                        onClick={() => this.movePageToSuggestion()}
+                                ></SubmitButton>
                             </div>
                         </div>
                         <div className="row">
                             <div className="col-md-12">
-                                <p>insert suggestions here</p>
+                                <ul>
+                                    <li>
+                                        <p clasName="suggestion-title">Suggestion title</p>
+                                        <p className="suggestion-description">Suggestion description</p>
+                                        <p className="suggestion-username">Username</p>
+                                        <p>+</p>
+                                        <p>-</p>
+                                    </li>    
+                                </ul>
                             </div>
                         </div>
-                        <InputField
-                            type='text'
-                            placeholder="Give your suggestion a name"
-                            value={this.state.title}
-                            onChange={(titleVal) => this.setInputValueSuggestionTitle('title', titleVal)}
-                        ></InputField>
-                        <InputField
-                            type='textarea'
-                            placeholder="Details"
-                            value={this.state.description}
-                            onChange={(textVal) => this.setInputValueSuggestionText('description', textVal)}
-                        ></InputField>
-                        <SubmitButton
-                            text="Submit"
-                            disabled={this.state.buttonDisabled}
-                            onClick={() => this.doNewSuggestion()}
-                        ></SubmitButton>
+                        <div className="row">
+                            <div className="col-lg-12">
+                                <InputField
+                                    type='text'
+                                    placeholder="Give your suggestion a name"
+                                    value={this.state.title}
+                                    onChange={(titleVal) => this.setInputValueSuggestionTitle('title', titleVal)}
+                                ></InputField>
+                            </div>
+                            <div className="col-lg-12">
+                                <InputField
+                                    type='textarea'
+                                    placeholder="Details"
+                                    value={this.state.description}
+                                    onChange={(textVal) => this.setInputValueSuggestionText('description', textVal)}
+                                ></InputField>
+                            </div>
+                            <div className="col-lg-12">
+                                <SubmitButton
+                                    text="Submit"
+                                    disabled={this.state.buttonDisabled}
+                                    onClick={() => this.doNewSuggestion()}
+                                ></SubmitButton>
+                            </div>
+                        </div>
                     </div>
                 )
-    
+
             }
-    
+
         }
-        
+
     }
 
 }

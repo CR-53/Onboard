@@ -128,6 +128,21 @@ a:hover {
   cursor: pointer;
 }
 
+.vote-btn {
+  width: 100%;
+  width: 50px;
+  min-width: 50px;
+  color: #ffffff !important;
+  padding: 4px;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 10px;
+  border-color: transparent;
+  background: rgb(11,15,37) !important;
+  background: linear-gradient(to right,#2176ca, #185591) !important;
+  cursor: pointer;
+}
+
 /* === FORM CSS === */
 .loginForm {
   box-sizing: border-box;

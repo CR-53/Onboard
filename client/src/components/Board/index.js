@@ -5,6 +5,8 @@ import UserStore from "../../stores/UserStore";
 import InputField from "../InputField";
 import SubmitButton from "../SubmitButton";
 import SortButton from "../SortButton";
+import UpvoteButton from "../UpvoteButton";
+import DownvoteButton from "../DownvoteButton";
 // import { BrowserRouter as useParams } from "react-router-dom";
 import { withRouter } from "react-router";
 import API from "../../utils/API";
@@ -96,7 +98,7 @@ class Board extends React.Component {
     }
 
     setInputValueSuggestionText(property, textVal) {
-        if (textVal.length > 350) {
+        if (textVal.length > 300) {
             return;
         }
         this.setState({
@@ -140,6 +142,14 @@ class Board extends React.Component {
 
     async movePageToSuggestion() {
         alert(`move page to suggestion`)
+    }
+
+    async addOne() {
+        // add one vote here
+    }
+
+    async minusOne() {
+        // minus one vote here
     }
 
     render() {
@@ -210,12 +220,31 @@ class Board extends React.Component {
                             <div className="col-md-12">
                                 <ul>
                                     <li>
-                                        <p clasName="suggestion-title">Suggestion title</p>
-                                        <p className="suggestion-description">Suggestion description</p>
-                                        <p className="suggestion-username">Username</p>
-                                        <p>+</p>
-                                        <p>-</p>
+                                        <p className="suggestion-title">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been them</p>
+                                        <p className="suggestion-description">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. specimen book. specimen book. specimen book. men book.</p>
+                                        <p className="suggestion-details"><span className="suggestion-username">Username</span>&nbsp;•&nbsp;<span className="suggestion-time">2 days ago</span></p>
+                                        <UpvoteButton
+                                            text="+ 0"
+                                            onClick={ () => this.addOne()}
+                                        />
+                                        <DownvoteButton
+                                            text="- 0"
+                                            onClick={ () => this.minusOne()}
+                                        />
                                     </li>    
+                                    <li>
+                                        <p className="suggestion-title">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been them</p>
+                                        <p className="suggestion-description">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. specimen book. specimen book. specimen book. men book.</p>
+                                        <p className="suggestion-details"><span className="suggestion-username">Username</span>&nbsp;•&nbsp;<span className="suggestion-time">2 days ago</span></p>
+                                        <UpvoteButton
+                                            text="+ 0"
+                                            onClick={ () => this.addOne()}
+                                        />
+                                        <DownvoteButton
+                                            text="- 0"
+                                            onClick={ () => this.minusOne()}
+                                        />
+                                    </li>  
                                 </ul>
                             </div>
                         </div>

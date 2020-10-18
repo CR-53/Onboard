@@ -22,20 +22,41 @@ li {
     list-style-type: none;
     color: #ffffff;
     border: 1px solid grey;
-    display: inline-flex;
     border-radius: 10px;
     width: 100%;
+    padding: 0px 10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 .suggestion-title {
     font-size: 15px;
+    margin-bottom: 5px;
 }
 
 .suggestion-description {
     font-size: 13px;
+    width: 90%;
+    margin-bottom: 5px;
 }
 
 .suggestion-username {
     color: #03dba7;
-    font-size: 12px;
+}
+
+.suggestion-details {
+    font-size: 12px !important;
+    margin-bottom: 0px;
+}
+
+.upvote {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+}
+ 
+.downvote {
+    position: absolute;
+    top: 70px;
+    right: 30px;
 }

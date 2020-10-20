@@ -1,13 +1,13 @@
 .navbar {
     background: rgb(11,28,43);
-    background: linear-gradient(5deg, rgba(11,28,43,1) 0%, rgba(10,37,62,1) 56%, rgba(10,37,62,1) 100%);
+    background: linear-gradient(to right,#00264D, #00172D) !important;
     height: 90px;
     margin-bottom: 40px;
     border-radius: 0px !important;
 }
 
 .navbar-brand {
-    display: flex !important;
+    display: flex !important; 
     flex-direction: column !important;
     justify-content: center !important;
 }

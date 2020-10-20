@@ -1,16 +1,16 @@
 import React from "react";
 import "./style.css";
 import UserStore from "../../stores/UserStore";
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import InputField from "../InputField";
-import SubmitButton from "../SubmitButton";
+import TextBox from "../TextBox";
 import SortButton from "../SortButton";
 import UpvoteButton from "../UpvoteButton";
 import DownvoteButton from "../DownvoteButton";
-// import { BrowserRouter as useParams } from "react-router-dom";
+import SuggestionButton from "../SuggestionButton";
 import { withRouter } from "react-router";
 import API from "../../utils/API";
-
+import AnchorLink from 'react-anchor-link-smooth-scroll'
 
 class Board extends React.Component {
 
@@ -23,14 +23,16 @@ class Board extends React.Component {
             boardTitle: '',
             boardDescription: '',
             boardOwner: '',
+            boardID: '',
             // suggestion data
             title: '',
             description: '',
             owner: '',
-            buttonDisabled: false
+            buttonDisabled: false,
+            // suggestion load data
+            suggestions: []
         }
     }
-
 
     async componentDidMount() {
         try {
@@ -51,8 +53,6 @@ class Board extends React.Component {
                 this.setState({
                     owner: UserStore.username
                 })
-                console.log(`username = ` + UserStore.username)
-                console.log(`owner = ` + this.state.owner)
             }
 
             else {
@@ -60,21 +60,21 @@ class Board extends React.Component {
                 UserStore.isLoggedIn = false;
                 console.log(`user is not logged in`)
             }
-            // let params = useParams()
-            // console.log(`params = ` + params )
             const slug = this.props.match.params.id;
-            console.log(slug);
-            API.getBoards().then(res => {
-                res.data.forEach(board => {
-                    if (slug === board.slug) {
-                        console.log(`match found!`)
-                        this.setState({
-                            loading: false,
-                            boardTitle: board.title,
-                            boardDescription: board.description,
-                            boardOwner: board.owner
-                        })
-                    }
+            console.log(`slug = ` + slug)
+            API.getBoardBySlug(slug).then(res => {
+                this.setState({
+                    loading: false,
+                    boardTitle: res.data[0].title,
+                    boardDescription: res.data[0].description,
+                    boardOwner: res.data[0].owner,
+                    boardID: res.data[0]._id
+                })
+                API.getSuggestionsByBoardID(res.data[0]._id).then(res => {
+                    console.log(res);
+                    this.setState({
+                        suggestions: res.data
+                    })
                 })
             })
             this.setState({
@@ -86,6 +86,16 @@ class Board extends React.Component {
             UserStore.loading = false;
             UserStore.isLoggedIn = false;
         }
+    }
+
+    async loadSuggestions(boardID) {
+        console.log(`loading suggestions`)
+        // boardID = this.state.boardID;
+        API.getSuggestionsByBoardID(boardID).then(res => {
+            this.setState({
+                suggestions: res.data
+            })
+        })
     }
 
     setInputValueSuggestionTitle(property, titleVal) {
@@ -114,7 +124,7 @@ class Board extends React.Component {
         })
     }
 
-    async doNewSuggestion() {
+    async saveNewSuggestion() {
         if (!this.state.title) {
             console.log(`no suggestion text`)
             return;
@@ -127,9 +137,19 @@ class Board extends React.Component {
             console.log(`no suggestion owner`)
         }
         // save suggestion to database here
-        // .then reload all suggestions for this board
-        // .then(() => this.resetNewSuggestionField())
-        // .catch(err => console.log(err));
+        console.log(`suggestion data: ` + this.state.title + " | " + this.state.description + " | " + this.state.owner + " | " + this.state.boardID)
+        API.saveSuggestion({
+            title: this.state.title,
+            description: this.state.description,
+            username: this.state.owner,
+            upvotes: 0,
+            downvotes: 0,
+            boardID: this.state.boardID
+        })
+            .then(() => console.log(`new suggestion created: ` + this.state.title + " | " + this.state.description + " | " + this.state.owner + " | " + this.state.boardID))
+            .then(() => this.resetNewSuggestionField())
+            .then(() => this.loadSuggestions(this.state.boardID))
+            .catch(err => console.log(err))
     }
 
     async sortByVotes() {
@@ -152,7 +172,16 @@ class Board extends React.Component {
         // minus one vote here
     }
 
+    async doNothing() {
+        console.log(`nothing`)
+    }
+
+
     render() {
+        const votesText = `Votes`;
+        const votesNewest = <React.Fragment>{votesText}&nbsp;<FontAwesomeIcon icon="sort">Votes</FontAwesomeIcon></React.Fragment>
+        const newestText = `Newest`;
+        const sortNewest = <React.Fragment>{newestText}&nbsp;<FontAwesomeIcon icon="sort">Newest</FontAwesomeIcon></React.Fragment>
 
         if (this.state.loading === true) {
 
@@ -165,7 +194,6 @@ class Board extends React.Component {
                     </div>
                 </div>
             )
-
         }
 
         else {
@@ -181,14 +209,13 @@ class Board extends React.Component {
                         </div>
                     </div>
                 )
-
             }
 
             else {
 
                 return (
                     <div className="container board-container">
-                        <div className="row">
+                        <div className="row board-header">
                             <div className="col-md-12">
                                 <h3 className="board-heading">Provide suggestions for <span className="board-title">{this.state.boardTitle}</span></h3>
                             </div>
@@ -196,60 +223,52 @@ class Board extends React.Component {
                                 <p className="board-description">{this.state.boardDescription}</p>
                             </div>
                         </div>
-                        <div className="row">
-                            <div className="col-lg-2">
-                                <SortButton 
-                                        text="Most voted"
-                                        onClick={() => this.sortByVotes()}
-                                ></SortButton>
-                            </div>
-                            <div className="col-lg-2">
-                                <SortButton
-                                        text="Newest"
-                                        onClick={() => this.sortByNewest()}
-                                ></SortButton>
-                            </div>
-                            <div className="col-lg-4">
-                                <SubmitButton
-                                        text="Make a suggestion"
-                                        onClick={() => this.movePageToSuggestion()}
-                                ></SubmitButton>
-                            </div>
-                        </div>
-                        <div className="row">
-                            <div className="col-md-12">
-                                <ul>
-                                    <li>
-                                        <p className="suggestion-title">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been them</p>
-                                        <p className="suggestion-description">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. specimen book. specimen book. specimen book. men book.</p>
-                                        <p className="suggestion-details"><span className="suggestion-username">Username</span>&nbsp;•&nbsp;<span className="suggestion-time">2 days ago</span></p>
-                                        <UpvoteButton
-                                            text="+ 0"
-                                            onClick={ () => this.addOne()}
-                                        />
-                                        <DownvoteButton
-                                            text="- 0"
-                                            onClick={ () => this.minusOne()}
-                                        />
-                                    </li>    
-                                    <li>
-                                        <p className="suggestion-title">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been them</p>
-                                        <p className="suggestion-description">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. specimen book. specimen book. specimen book. men book.</p>
-                                        <p className="suggestion-details"><span className="suggestion-username">Username</span>&nbsp;•&nbsp;<span className="suggestion-time">2 days ago</span></p>
-                                        <UpvoteButton
-                                            text="+ 0"
-                                            onClick={ () => this.addOne()}
-                                        />
-                                        <DownvoteButton
-                                            text="- 0"
-                                            onClick={ () => this.minusOne()}
-                                        />
-                                    </li>  
-                                </ul>
-                            </div>
-                        </div>
-                        <div className="row">
+                        <div className="row board-button-row">
                             <div className="col-lg-12">
+                                <SortButton
+                                    text={votesNewest}
+                                    onClick={() => this.sortByVotes()}
+                                ></SortButton>
+                                <SortButton
+                                    text={sortNewest}
+                                    onClick={() => this.sortByNewest()}
+                                ></SortButton>
+                                <AnchorLink href='#suggestion-area'><SuggestionButton
+                                    text="Make a suggestion"
+                                    onClick={() => this.doNothing()}
+                                ></SuggestionButton></AnchorLink>
+                            </div>
+                        </div>
+                        <div className="row board-suggestions-row">
+                            <div className="col-md-12">
+                                {this.state.suggestions.length ? (
+                                    <ul>
+                                        {this.state.suggestions.map(suggestion => (
+                                            <li>
+                                                <UpvoteButton
+                                                    text={<FontAwesomeIcon icon="caret-up" />}
+                                                    onClick={() => this.addOne()}
+                                                />
+                                                <DownvoteButton
+                                                    text={<FontAwesomeIcon icon="caret-down" />}
+                                                    onClick={() => this.minusOne()}
+                                                />
+                                                <p className="suggestion-title">{suggestion.title}</p>
+                                                <p className="suggestion-description">{suggestion.description}</p>
+                                                <p className="suggestion-details"><span className="suggestion-username">{suggestion.username}</span>&nbsp;•&nbsp;<span className="suggestion-time">{suggestion.createdAt}</span></p>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                        <p className="suggestion-title">No suggestions to display</p>
+                                    )}
+                            </div>
+                        </div>
+                        <div className="row new-suggestion-row" id="suggestion-area">
+                            <div className="col-lg-12 suggestion-form-area">
+                                <h4 className="make-a-suggestion-text">Make a new suggestion</h4>
+                            </div>
+                            <div className="col-lg-12 suggestion-form-area">
                                 <InputField
                                     type='text'
                                     placeholder="Give your suggestion a name"
@@ -257,29 +276,25 @@ class Board extends React.Component {
                                     onChange={(titleVal) => this.setInputValueSuggestionTitle('title', titleVal)}
                                 ></InputField>
                             </div>
-                            <div className="col-lg-12">
-                                <InputField
-                                    type='textarea'
+                            <div className="col-lg-12 suggestion-form-area">
+                                <TextBox
                                     placeholder="Details"
                                     value={this.state.description}
                                     onChange={(textVal) => this.setInputValueSuggestionText('description', textVal)}
-                                ></InputField>
+                                ></TextBox>
                             </div>
-                            <div className="col-lg-12">
-                                <SubmitButton
-                                    text="Submit"
+                            <div className="col-lg-12 suggestion-form-area button-area">
+                                <SuggestionButton
+                                    text="Submit suggestion"
                                     disabled={this.state.buttonDisabled}
-                                    onClick={() => this.doNewSuggestion()}
-                                ></SubmitButton>
+                                    onClick={() => this.saveNewSuggestion()}
+                                ></SuggestionButton>
                             </div>
                         </div>
                     </div>
                 )
-
             }
-
         }
-
     }
 
 }

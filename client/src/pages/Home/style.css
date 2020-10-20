@@ -1,10 +1,8 @@
 .card {
     background: rgb(11,15,37);
     background: linear-gradient(to right,#2176ca, #185591);
-    /* border-color: #70c989; */
-    border-width: 3px;
-    border-style: solid;
     border-radius: 10px;
+    box-shadow: 1px 1px 12px 5px #00000066;
 }
 
 .card-body {
@@ -28,4 +26,5 @@
 
 .card-text {
     font-size: 16px;
+    color: #dadada !important;
 }

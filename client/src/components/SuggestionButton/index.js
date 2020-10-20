@@ -1,12 +1,13 @@
 import React from "react";
 import "./style.css";
+// import { Button } from 'react-bootstrap';
 
-class SortButton extends React.Component {
+class SuggestionButton extends React.Component {
     
     render() {
         return (
                 <button 
-                    className='sort-btn btn-background'
+                    className='suggestion-btn btn-background'
                     disabled={this.props.disabled}
                     onClick={ () => this.props.onClick() }
                 >
@@ -16,4 +17,4 @@ class SortButton extends React.Component {
     }
 }
 
-export default SortButton;
+export default SuggestionButton;

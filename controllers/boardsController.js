@@ -2,7 +2,7 @@ const db = require("../models");
 
 // Defining methods for the boardsController
 module.exports = {
-  // retrieve most popular boards by number of suggestions
+  // 
   findAll: function(req, res) {
     db.Board
       .find(req.query)
@@ -11,10 +11,11 @@ module.exports = {
       .catch(err => res.status(422).json(err));
   },
   findBySlug: function(req, res) {
+    console.log(req.params)
     db.Board
-      .findOne(req.query)
-      .then(res => console.log(res))
-      .catch(err => res.status(422).json(errr));
+    .find({slug: req.params.slug})
+    .then(dbModel => res.json(dbModel))
+    .catch(err => res.status(422).json(err))
   },
   // find specific board by ID
   findById: function(req, res) {
@@ -28,7 +29,6 @@ module.exports = {
     db.Board
       .create(req.body)
       .then(dbModel => res.json(dbModel))
-      .then(console.log(`req.body= ` + req.body))
       .catch(err => res.status(422).json(err));
   },
   // update a board

@@ -85,8 +85,8 @@ class Signup extends React.Component {
                 return (
                     <div className="app">
                         <div className="container">
-                            You are already logged in as {UserStore.username}.
-                            Would you like to log out and register as a different user?
+                            <p className="login-text already-logged-in">You are already logged in as <span className="username">{UserStore.username}</span>.
+                            <br></br>Would you like to log out and register as a different user?</p>
                             
                             <a href="/signup"><SubmitButton
                                 text={"Log out"}

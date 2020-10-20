@@ -82,7 +82,7 @@ class SignupForm extends React.Component {
                 <div className="container">
                     <div className="row">
                         <div className="col-md-12">
-                            <h3>Create a new account</h3>
+                            <h3 className="login-text">Create a new account</h3>
                             <InputField 
                                 type='text'
                                 placeholder='Username'

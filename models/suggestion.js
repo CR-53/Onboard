@@ -3,26 +3,24 @@ const Schema = mongoose.Schema;
 
 const suggestionSchema = new mongoose.Schema({
   title: {
-    type: String,
+    type: String
   },
   description: {
-    type: String,
+    type: String
   },
   username: {
-    type: String,
+    type: String
   },
   boardID: {
-    type: String,
-    default: "",
-    unique: true
+    type: String
   },
   upvotes: {
-    type: Number,
+    type: Number
   },
   downvotes: {
     type: Number
   }
-});
+}, { timestamps: true });
 
 const Suggestion = mongoose.model("Suggestion", suggestionSchema);
 

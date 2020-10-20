@@ -2,14 +2,15 @@
     /* margin-top: 40px;  */
     width: 100%;
     background: rgb(11,28,43);
-    background: linear-gradient(5deg, rgba(11,28,43,1) 0%, rgba(10,37,62,1) 56%, rgba(10,37,62,1) 100%);
-    padding: 20px !important;
+    background: linear-gradient(to right, rgba(10,37,62,1), rgba(11,28,43,1)) !important;
+    padding: 20px 20px 20px 20px !important;
     height: 100px;
 }
 
 .footer-text {
     font-size: 14px;
     color: #ffffff;
+    margin-top: 10px
 }
 
 .footer-link {

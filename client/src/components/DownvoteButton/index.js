@@ -6,7 +6,6 @@ class DownvoteButton extends React.Component {
     
     render() {
         return (
-            <div className="submitButton">
                 <button 
                     className='downvote vote-btn btn-background'
                     disabled={this.props.disabled}
@@ -14,7 +13,6 @@ class DownvoteButton extends React.Component {
                 >
                     {this.props.text}
                 </button>
-            </div>
         )
     }
 }

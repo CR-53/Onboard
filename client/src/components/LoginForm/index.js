@@ -82,7 +82,7 @@ class LoginForm extends React.Component {
                 <div className="container">
                     <div className="row">
                         <div className="col-md-12">
-                            <h3>Log in</h3>
+                            <h3 className="login-text">Log in</h3>
                             <InputField 
                                 type='text'
                                 placeholder='Username'

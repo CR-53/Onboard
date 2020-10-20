@@ -1,9 +1,23 @@
 .board-container {
-    border: 2px solid grey;
     border-radius: 10px;
     text-align: left;
-    padding-top: 20px;
-    padding-bottom: 20px;
+    padding: 0px;
+    margin-top: 70px;
+    box-shadow: 1px 1px 12px 5px #00000066;
+}
+
+.board-header {
+    /* background: linear-gradient(to right #0e3c68, #173859) !important; */
+    background: linear-gradient(to right,#17406b, #132e4a) !important;
+    border-radius: 10px;
+    padding: 0px 20px 0px 20px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.board-heading {
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-top: 40px;
 }
 
 .board-title {
@@ -11,7 +25,24 @@
 }
 
 .board-description {
-    font-size: 16px;
+    font-size: 14px;
+    margin-left: 10px;
+    margin-bottom: 40px;
+    color: #bbb9b9 !important;
+}
+
+.board-button-row {
+    padding: 0px 20px 0px 20px;
+    background: linear-gradient(to right,#204368, #0a253e) !important;
+    border-top: 1px solid #80808038;
+}
+
+.board-suggestions-row {
+    padding: 0px 20px 0px 20px;
+    /* background: linear-gradient(to right,#17406b, #132e4a) !important; */
+    background: linear-gradient(to right,#204368, #0a253e) !important;
+    border-bottom: 1px solid #80808038;
+    border-top: 1px solid #80808038;
 }
 
 ul {
@@ -21,12 +52,12 @@ ul {
 li {
     list-style-type: none;
     color: #ffffff;
-    border: 1px solid grey;
     border-radius: 10px;
     width: 100%;
     padding: 0px 10px;
     margin-top: 20px;
     margin-bottom: 20px;
+    height: 100px;
 }
 
 .suggestion-title {
@@ -36,8 +67,9 @@ li {
 
 .suggestion-description {
     font-size: 13px;
-    width: 90%;
+    width: 92%;
     margin-bottom: 5px;
+    color: #bbb9b9 !important;
 }
 
 .suggestion-username {
@@ -50,13 +82,152 @@ li {
 }
 
 .upvote {
-    position: absolute;
-    top: 30px;
-    right: 30px;
+    position: relative;
+    bottom: 60px;
+    left: 94%;
 }
- 
+
 .downvote {
-    position: absolute;
-    top: 70px;
-    right: 30px;
+    position: relative;
+    bottom: 20px;
+    left: 89.3%;
+}
+
+.new-suggestion-row {
+    padding: 0px 20px 20px 20px;
+    background: linear-gradient(to right,#204368, #0a253e) !important;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.make-a-suggestion-text {
+    margin-top: 30px;
+}
+
+.suggestion-form-area {
+    max-width: 100%;
+    margin: auto;
+    padding-left: 25px;
+    padding-right: 25px;
+}
+
+.make-a-suggestion-text {
+    font-size: 20px !important;
+    margin-bottom: -6px;
+}
+
+.button-area {
+    padding-right: 15px !important;
+}
+
+
+/* MEDIA QUERIES */ 
+
+@media screen and (max-width: 1200px) {
+    .upvote {
+        left: 95%;
+    }
+}
+
+@media screen and (max-width: 991px) {
+    .suggestion-title {
+        width: 92%;
+    }
+
+    .upvote {
+        bottom: 140px;
+        left: 92.3%;
+    }
+
+    .downvote {
+        bottom: 100px;
+        left: 84.5%;
+    }
+    
+    li {
+        height: 150px !important;
+    }
+}
+
+@media screen and (max-width: 767px) {
+
+    .board-header, .board-button-row, .board-suggestions-row, .new-suggestion-row {
+        padding: 0px !important;
+    }
+
+    .suggestion-title, .suggestion-description {
+        width: 86%;
+    }
+
+    .suggestion-btn {
+        min-width: 180px;
+    }
+
+    .upvote {
+        bottom: 170px;
+        left: 90%;
+    }
+
+    .downvote {
+        bottom: 130px;
+        left: 80%;
+    }
+
+    li {
+        height: 200px !important;
+    }
+}
+
+@media screen and (max-width: 517px) {
+
+    li {
+        height: 210px !important;
+    }
+
+}
+
+@media screen and (max-width: 492px) {
+
+    .sort-btn {
+        min-width: 100px;
+    }
+
+    .suggestion-btn {
+        min-width: 160px;
+    }
+
+}
+
+@media screen and (max-width: 430px) {
+
+    .sort-btn {
+        min-width: 80px;
+        width: unset;
+    }
+
+    .suggestion-btn {
+        min-width: 160px;
+    }
+
+}
+
+@media screen and (max-width: 400px) {
+
+    .suggestion-btn {
+        min-width: 140px;
+        padding-left: 0px;
+        padding-right: 0px;
+    }
+
+}
+
+@media screen and (max-width: 380px) {
+
+    .suggestion-btn {
+        min-width: 120px;
+        padding-top: 0px;
+        padding-bottom: 0px;
+        line-height: 1.1;
+    }
+    
 }

@@ -16,7 +16,7 @@ const boardSchema = new mongoose.Schema({
   slug: {
     type: String,
   }
-});
+}, {timestamps: true});
 
 const Board = mongoose.model("Board", boardSchema);
 

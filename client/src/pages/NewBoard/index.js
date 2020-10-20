@@ -2,6 +2,7 @@ import React from "react";
 import "./style.css";
 import UserStore from "../../stores/UserStore";
 import InputField from "../../components/InputField";
+import TextBox from "../../components/TextBox";
 import SubmitButton from "../../components/SubmitButton";
 import { observer } from "mobx-react";
 import API from "../../utils/API";
@@ -128,7 +129,7 @@ class NewBoard extends React.Component {
     render() {
         return (
             <div className="container">
-                <div className="row first-section">
+                <div className="row first-section new-board-row">
                     <div className="col-md-12">
                         <h3 className="section-heading">Create a new feedback board</h3>
                     </div>
@@ -139,8 +140,7 @@ class NewBoard extends React.Component {
                             value={this.state.title}
                             onChange={ (nameVal) => this.setInputValueName('title', nameVal) }
                         />
-                        <InputField
-                            type='textarea'
+                        <TextBox
                             placeholder="Enter a short description of your project"
                             value={this.state.description}
                             onChange={ (descriptionVal) => this.setInputValueDescription('description', descriptionVal) }

@@ -1,10 +1,9 @@
 const router = require("express").Router();
 const boardsController = require("../../controllers/boardsController");
 
-// Matches with "/api/api"
+// Matches with "/api/"
 router.route("/")
   .get(boardsController.findAll)
-  .get(boardsController.findBySlug)
   .post(boardsController.create);
 
 // Matches with "/api/boards/:id"
@@ -13,5 +12,9 @@ router
   .get(boardsController.findById)
   .put(boardsController.update)
   .delete(boardsController.remove);
+
+router
+  .route("/boardslug/:slug")
+  .get(boardsController.findBySlug);
 
 module.exports = router;

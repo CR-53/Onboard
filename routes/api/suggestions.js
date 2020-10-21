@@ -9,8 +9,8 @@ router.route("/")
 // Matches with "/api/suggestions/:id"
 router
   .route("/:id")
-  .get(suggestionsController.findById);
-//   .put(suggestionsController.update)
+  .get(suggestionsController.findById)
+  .put(suggestionsController.update);
 //   .delete(suggestionsController.remove);
 
 router

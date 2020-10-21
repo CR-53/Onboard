@@ -12,7 +12,6 @@ module.exports = {
   },
   // find by boardID
   findSuggestionByBoardId: function(req, res) {
-    console.log(req.params)
     db.Suggestion
     .find({boardID: req.params.boardid})
     .then(dbModel => res.json(dbModel))
@@ -31,14 +30,14 @@ module.exports = {
       .create(req.body)
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
-  }
-//   // update a suggestion
-//   update: function(req, res) {
-//     db.Suggestion
-//       .findOneAndUpdate({ _id: req.params.id }, req.body)
-//       .then(dbModel => res.json(dbModel))
-//       .catch(err => res.status(422).json(err));
-//   },
+  },
+  // update a suggestion
+  update: function(req, res) {
+    db.Suggestion
+      .findOneAndUpdate({ _id: req.params.id }, req.body)
+      .then(dbModel => res.json(dbModel))
+      .catch(err => res.status(422).json(err));
+  },
 //   // delete a suggestion
 //   remove: function(req, res) {
 //     db.Suggestion

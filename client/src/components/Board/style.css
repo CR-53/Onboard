@@ -58,11 +58,21 @@ li {
     margin-top: 20px;
     margin-bottom: 20px;
     height: 100px;
+    position: relative;
 }
 
 .suggestion-title {
     font-size: 15px;
     margin-bottom: 5px;
+}
+
+.no-suggestion-text {
+    font-size: 16px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding-left: 10px;
+    font-style: italic;
+    color: #bbb9b9 !important;
 }
 
 .suggestion-description {
@@ -82,15 +92,17 @@ li {
 }
 
 .upvote {
-    position: relative;
-    bottom: 60px;
-    left: 94%;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    margin-right: 10px;
 }
 
 .downvote {
-    position: relative;
-    bottom: 20px;
-    left: 89.3%;
+    position: absolute;
+    top: 40px;
+    right: 0px;
+    margin-right: 10px;
 }
 
 .new-suggestion-row {
@@ -123,30 +135,22 @@ li {
 
 /* MEDIA QUERIES */ 
 
-@media screen and (max-width: 1200px) {
-    .upvote {
-        left: 95%;
-    }
-}
 
 @media screen and (max-width: 991px) {
     .suggestion-title {
         width: 92%;
     }
 
-    .upvote {
+    /* .upvote {
         bottom: 140px;
         left: 92.3%;
-    }
+    } */
 
-    .downvote {
+    /* .downvote {
         bottom: 100px;
         left: 84.5%;
-    }
+    } */
     
-    li {
-        height: 150px !important;
-    }
 }
 
 @media screen and (max-width: 767px) {
@@ -163,7 +167,7 @@ li {
         min-width: 180px;
     }
 
-    .upvote {
+    /* .upvote {
         bottom: 170px;
         left: 90%;
     }
@@ -171,18 +175,11 @@ li {
     .downvote {
         bottom: 130px;
         left: 80%;
-    }
-
-    li {
-        height: 200px !important;
-    }
+    } */
 }
 
 @media screen and (max-width: 517px) {
 
-    li {
-        height: 210px !important;
-    }
 
 }
 

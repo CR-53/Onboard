@@ -30,7 +30,9 @@ class Board extends React.Component {
             owner: '',
             buttonDisabled: false,
             // suggestion load data
-            suggestions: []
+            suggestions: [],
+            // admin controls
+            adminDisplay: false
         }
     }
 
@@ -61,7 +63,6 @@ class Board extends React.Component {
                 console.log(`user is not logged in`)
             }
             const slug = this.props.match.params.id;
-            console.log(`slug = ` + slug)
             API.getBoardBySlug(slug).then(res => {
                 this.setState({
                     loading: false,
@@ -70,8 +71,13 @@ class Board extends React.Component {
                     boardOwner: res.data[0].owner,
                     boardID: res.data[0]._id
                 })
+                if (this.state.owner === res.data[0].owner) {
+                    this.setState({
+                        adminDisplay: true
+                    })
+                }
+                console.log(`admin controls = ` + this.state.adminDisplay)
                 API.getSuggestionsByBoardID(res.data[0]._id).then(res => {
-                    console.log(res);
                     this.setState({
                         suggestions: res.data
                     })
@@ -89,8 +95,6 @@ class Board extends React.Component {
     }
 
     async loadSuggestions(boardID) {
-        console.log(`loading suggestions`)
-        // boardID = this.state.boardID;
         API.getSuggestionsByBoardID(boardID).then(res => {
             this.setState({
                 suggestions: res.data
@@ -142,8 +146,8 @@ class Board extends React.Component {
             title: this.state.title,
             description: this.state.description,
             username: this.state.owner,
-            upvotes: 0,
-            downvotes: 0,
+            upvotes: [],
+            downvotes: [],
             boardID: this.state.boardID
         })
             .then(() => console.log(`new suggestion created: ` + this.state.title + " | " + this.state.description + " | " + this.state.owner + " | " + this.state.boardID))
@@ -164,12 +168,52 @@ class Board extends React.Component {
         alert(`move page to suggestion`)
     }
 
-    async addOne() {
-        // add one vote here
+    async addOne(id) {
+        if (this.state.owner) {
+            API.getSuggestion(id).then(res => {
+                if (res.data.upvotes.includes(this.state.owner)) {
+                    console.log(`USER FOUND: ` + this.state.owner)
+                    API.updateSuggestion(id, {
+                        $pull: { upvotes: this.state.owner }
+                    })
+                }
+                else {
+                    console.log(`USER NOT FOUND ` + this.state.owner)
+                    API.updateSuggestion(id, {
+                        $addToSet: { upvotes: this.state.owner },
+                        $pull: { downvotes: this.state.owner}
+                    })
+                }
+            })
+            .then(() => this.loadSuggestions(this.state.boardID))
+        }
+        else {
+            alert(`you must be logged in to vote`)
+        }
     }
 
-    async minusOne() {
-        // minus one vote here
+    async minusOne(id) {
+        if (this.state.owner) {
+            API.getSuggestion(id).then(res => {
+                if (res.data.downvotes.includes(this.state.owner)) {
+                    console.log(`USER FOUND: ` + this.state.owner)
+                    API.updateSuggestion(id, {
+                        $pull: { downvotes: this.state.owner }
+                    })
+                }
+                else {
+                    console.log(`USER NOT FOUND ` + this.state.owner)
+                    API.updateSuggestion(id, {
+                        $addToSet: { downvotes: this.state.owner },
+                        $pull: { upvotes: this.state.owner}
+                    })
+                }
+            })
+            .then(() => this.loadSuggestions(this.state.boardID))
+        }
+        else {
+            alert(`you must be logged in to vote`)
+        }
     }
 
     async doNothing() {
@@ -244,23 +288,23 @@ class Board extends React.Component {
                                 {this.state.suggestions.length ? (
                                     <ul>
                                         {this.state.suggestions.map(suggestion => (
-                                            <li>
-                                                <UpvoteButton
-                                                    text={<FontAwesomeIcon icon="caret-up" />}
-                                                    onClick={() => this.addOne()}
-                                                />
-                                                <DownvoteButton
-                                                    text={<FontAwesomeIcon icon="caret-down" />}
-                                                    onClick={() => this.minusOne()}
-                                                />
+                                            <li key={suggestion._id}>
                                                 <p className="suggestion-title">{suggestion.title}</p>
                                                 <p className="suggestion-description">{suggestion.description}</p>
                                                 <p className="suggestion-details"><span className="suggestion-username">{suggestion.username}</span>&nbsp;•&nbsp;<span className="suggestion-time">{suggestion.createdAt}</span></p>
+                                                <UpvoteButton
+                                                    text={<span><FontAwesomeIcon icon="caret-up" />&nbsp;{suggestion.upvotes.length}</span>}
+                                                    onClick={() => this.addOne(suggestion._id)}
+                                                />
+                                                <DownvoteButton
+                                                    text={<span><FontAwesomeIcon icon="caret-down" />&nbsp;{suggestion.downvotes.length}</span>}
+                                                    onClick={() => this.minusOne(suggestion._id)}
+                                                />
                                             </li>
                                         ))}
                                     </ul>
                                 ) : (
-                                        <p className="suggestion-title">No suggestions to display</p>
+                                        <p className="no-suggestion-text">No suggestions have been made on this board, be the first below!</p>
                                     )}
                             </div>
                         </div>
@@ -278,7 +322,7 @@ class Board extends React.Component {
                             </div>
                             <div className="col-lg-12 suggestion-form-area">
                                 <TextBox
-                                    placeholder="Details"
+                                    placeholder="Provide some details of your suggestion"
                                     value={this.state.description}
                                     onChange={(textVal) => this.setInputValueSuggestionText('description', textVal)}
                                 ></TextBox>

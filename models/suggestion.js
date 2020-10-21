@@ -15,10 +15,10 @@ const suggestionSchema = new mongoose.Schema({
     type: String
   },
   upvotes: {
-    type: Number
+    type: Array
   },
   downvotes: {
-    type: Number
+    type: Array
   }
 }, { timestamps: true });
 

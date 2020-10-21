@@ -36,6 +36,9 @@ export default {
   getSuggestionsByBoardID: function(boardID) {
     return axios.get("/api/suggestions/boardid/" + boardID);
   },
+  findSuggestionByBoardIdSortByVotes: function(boardID) {
+    return axios.get("/api/suggestions/boardid/sortbyvotes/" + boardID)
+  },
   // Saves suggestion
   saveSuggestion: function(suggestionData) {
     return axios.post("/api/suggestions", suggestionData);

@@ -42,6 +42,7 @@ a {
 a:hover {
   cursor: pointer;
   color: darkorange;
+  text-decoration: none !important;
 }
 
 /* === SECTION CSS === */

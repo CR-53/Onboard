@@ -37,7 +37,10 @@ class Board extends React.Component {
             showEditModal: false,
             // edit board
             tempBoardTitle: '',
-            tempBoardDescription: ''
+            tempBoardDescription: '',
+            // sort suggestions
+            votesDescending: true,
+            dateDescending: true
         }
     }
 
@@ -179,7 +182,8 @@ class Board extends React.Component {
             username: this.state.owner,
             upvotes: [],
             downvotes: [],
-            boardID: this.state.boardID
+            boardID: this.state.boardID,
+            difference: 0
         })
             .then(() => console.log(`new suggestion created: ` + this.state.title + " | " + this.state.description + " | " + this.state.owner + " | " + this.state.boardID))
             .then(() => this.resetNewSuggestionField())
@@ -191,8 +195,23 @@ class Board extends React.Component {
         API.deleteSuggestion(id).then(() => this.loadSuggestions(this.state.boardID))
     }
 
-    async sortByVotes() {
-        alert(`sort by votes`)
+    async sortByVotes(boardID) {
+        boardID = this.state.boardID;
+        API.findSuggestionByBoardIdSortByVotes(boardID).then(res => {
+            if (this.state.votesDescending) {
+                this.setState({
+                    suggestions: res.data,
+                    votesDescending: false
+                })
+            }
+            else {
+                res.data.reverse();
+                this.setState({
+                    suggestions: res.data,
+                    votesDescending: true
+                })
+            }
+        })
     }
 
     async sortByNewst() {
@@ -203,13 +222,11 @@ class Board extends React.Component {
         if (this.state.owner) {
             API.getSuggestion(id).then(res => {
                 if (res.data.upvotes.includes(this.state.owner)) {
-                    console.log(`USER FOUND: ` + this.state.owner)
                     API.updateSuggestion(id, {
-                        $pull: { upvotes: this.state.owner }
+                        $pull: { upvotes: this.state.owner },
                     })
                 }
                 else {
-                    console.log(`USER NOT FOUND ` + this.state.owner)
                     API.updateSuggestion(id, {
                         $addToSet: { upvotes: this.state.owner },
                         $pull: { downvotes: this.state.owner }
@@ -217,6 +234,7 @@ class Board extends React.Component {
                 }
             })
                 .then(() => this.loadSuggestions(this.state.boardID))
+                .then(() => this.setDifference(id))
         }
         else {
             alert(`you must be logged in to vote`)
@@ -227,13 +245,11 @@ class Board extends React.Component {
         if (this.state.owner) {
             API.getSuggestion(id).then(res => {
                 if (res.data.downvotes.includes(this.state.owner)) {
-                    console.log(`USER FOUND: ` + this.state.owner)
                     API.updateSuggestion(id, {
                         $pull: { downvotes: this.state.owner }
                     })
                 }
                 else {
-                    console.log(`USER NOT FOUND ` + this.state.owner)
                     API.updateSuggestion(id, {
                         $addToSet: { downvotes: this.state.owner },
                         $pull: { upvotes: this.state.owner }
@@ -241,10 +257,20 @@ class Board extends React.Component {
                 }
             })
                 .then(() => this.loadSuggestions(this.state.boardID))
+                .then(() => this.setDifference(id))
         }
         else {
             alert(`you must be logged in to vote`)
         }
+    }
+
+    async setDifference(id) {
+        API.getSuggestion(id).then(res => {
+            let difference = res.data.upvotes.length - res.data.downvotes.length;
+            API.updateSuggestion(id, {
+                difference: difference
+            })
+        })
     }
 
     async showEditModal() {
@@ -439,7 +465,7 @@ class Board extends React.Component {
                                         ))}
                                     </ul>
                                 ) : (
-                                        <p className="no-suggestion-text">No suggestions have been made on this board, be the first below!</p>
+                                        <p className="no-suggestion-text">There are currently no suggestions on this board, make one below.</p>
                                     )}
                             </div>
                         </div>

@@ -19,6 +19,9 @@ const suggestionSchema = new mongoose.Schema({
   },
   downvotes: {
     type: Array
+  },
+  difference: {
+    type: Number
   }
 }, { timestamps: true });
 

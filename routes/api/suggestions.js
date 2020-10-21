@@ -16,6 +16,9 @@ router
 router
   .route("/boardid/:boardid")
   .get(suggestionsController.findSuggestionByBoardId);
-  
+
+router
+  .route("/boardid/sortbyvotes/:boardid")
+  .get(suggestionsController.findSuggestionByBoardIdSortByVotes);
 
 module.exports = router;

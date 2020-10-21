@@ -10,8 +10,8 @@ router.route("/")
 router
   .route("/:id")
   .get(suggestionsController.findById)
-  .put(suggestionsController.update);
-//   .delete(suggestionsController.remove);
+  .put(suggestionsController.update)
+  .delete(suggestionsController.remove);
 
 router
   .route("/boardid/:boardid")

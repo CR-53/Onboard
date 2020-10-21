@@ -20,6 +20,10 @@ export default {
   saveBoard: function(boardData) {
     return axios.post("/api/boards", boardData);
   },
+  // Updates the boards info
+  updateBoard: function(id, boardUpdate) {
+    return axios.put("/api/boards/" + id, boardUpdate)
+  },
   // Gets all suggestions
   getSuggestions: function() {
     return axios.get("/api/suggestions");
@@ -36,7 +40,12 @@ export default {
   saveSuggestion: function(suggestionData) {
     return axios.post("/api/suggestions", suggestionData);
   },
+  // Updates the suggestion with the given id
   updateSuggestion: function(id, suggestionUpdate) {
     return axios.put("/api/suggestions/" + id, suggestionUpdate)
-  }
+  },
+  // Deletes the suggestion with the given id
+  deleteSuggestion: function(id) {
+    return axios.delete("/api/suggestions/" + id);
+  },
 };

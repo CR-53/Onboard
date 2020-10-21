@@ -1,5 +1,6 @@
-import React from "react";
+import React from 'react';
 import "./style.css";
+import { withRouter } from "react-router";
 import UserStore from "../../stores/UserStore";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import InputField from "../InputField";
@@ -8,9 +9,9 @@ import SortButton from "../SortButton";
 import UpvoteButton from "../UpvoteButton";
 import DownvoteButton from "../DownvoteButton";
 import SuggestionButton from "../SuggestionButton";
-import { withRouter } from "react-router";
 import API from "../../utils/API";
-import AnchorLink from 'react-anchor-link-smooth-scroll'
+import AnchorLink from 'react-anchor-link-smooth-scroll';
+import { Button, Dropdown, Modal } from 'react-bootstrap';
 
 class Board extends React.Component {
 
@@ -32,7 +33,11 @@ class Board extends React.Component {
             // suggestion load data
             suggestions: [],
             // admin controls
-            adminDisplay: false
+            adminDisplay: false,
+            showEditModal: false,
+            // edit board
+            tempBoardTitle: '',
+            tempBoardDescription: ''
         }
     }
 
@@ -94,6 +99,24 @@ class Board extends React.Component {
         }
     }
 
+    async loadBoardData(slug) {
+        slug = this.props.match.params.id;
+        API.getBoardBySlug(slug).then(res => {
+            this.setState({
+                loading: false,
+                boardTitle: res.data[0].title,
+                boardDescription: res.data[0].description,
+                boardOwner: res.data[0].owner,
+                boardID: res.data[0]._id
+            })
+            if (this.state.owner === res.data[0].owner) {
+                this.setState({
+                    adminDisplay: true
+                })
+            }
+        })    
+    }
+
     async loadSuggestions(boardID) {
         API.getSuggestionsByBoardID(boardID).then(res => {
             this.setState({
@@ -128,6 +151,13 @@ class Board extends React.Component {
         })
     }
 
+    resetModalForm() {
+        this.setState({
+            tempBoardTitle: '',
+            tempBoardDescription: ''
+        })
+    }
+
     async saveNewSuggestion() {
         if (!this.state.title) {
             console.log(`no suggestion text`)
@@ -139,6 +169,7 @@ class Board extends React.Component {
         }
         if (!this.state.owner) {
             console.log(`no suggestion owner`)
+            return;
         }
         // save suggestion to database here
         console.log(`suggestion data: ` + this.state.title + " | " + this.state.description + " | " + this.state.owner + " | " + this.state.boardID)
@@ -156,16 +187,16 @@ class Board extends React.Component {
             .catch(err => console.log(err))
     }
 
+    async deleteSuggestion(id) {
+        API.deleteSuggestion(id).then(() => this.loadSuggestions(this.state.boardID))
+    }
+
     async sortByVotes() {
         alert(`sort by votes`)
     }
 
     async sortByNewst() {
         alert(`sort by newest`)
-    }
-
-    async movePageToSuggestion() {
-        alert(`move page to suggestion`)
     }
 
     async addOne(id) {
@@ -181,11 +212,11 @@ class Board extends React.Component {
                     console.log(`USER NOT FOUND ` + this.state.owner)
                     API.updateSuggestion(id, {
                         $addToSet: { upvotes: this.state.owner },
-                        $pull: { downvotes: this.state.owner}
+                        $pull: { downvotes: this.state.owner }
                     })
                 }
             })
-            .then(() => this.loadSuggestions(this.state.boardID))
+                .then(() => this.loadSuggestions(this.state.boardID))
         }
         else {
             alert(`you must be logged in to vote`)
@@ -205,21 +236,84 @@ class Board extends React.Component {
                     console.log(`USER NOT FOUND ` + this.state.owner)
                     API.updateSuggestion(id, {
                         $addToSet: { downvotes: this.state.owner },
-                        $pull: { upvotes: this.state.owner}
+                        $pull: { upvotes: this.state.owner }
                     })
                 }
             })
-            .then(() => this.loadSuggestions(this.state.boardID))
+                .then(() => this.loadSuggestions(this.state.boardID))
         }
         else {
             alert(`you must be logged in to vote`)
         }
     }
 
+    async showEditModal() {
+        this.setState({
+            showEditModal: true
+        })
+    }
+
+    async hideEditModal() {
+        this.setState({
+            showEditModal: false
+        })
+    }
+
+    async submitChanges(id) {
+        if (this.state.tempBoardTitle || this.state.tempBoardDescription) {
+            id = this.state.boardID;
+            console.log(`BOARD FOUND: ` + id)
+            if (this.state.tempBoardTitle && !this.state.tempBoardDescription) {
+                API.updateBoard(id, {
+                    title: this.state.tempBoardTitle
+                })
+                .then(() => this.loadBoardData())
+                .then(() => this.resetModalForm())
+                .then(() => this.hideEditModal())
+            }
+            else if (!this.state.tempBoardTitle && this.state.tempBoardDescription) {
+                API.updateBoard(id, {
+                    description: this.state.tempBoardDescription
+                })
+                .then(() => this.loadBoardData())
+                .then(() => this.resetModalForm())
+                .then(() => this.hideEditModal())
+            }
+            else {
+                API.updateBoard(id, {
+                    title: this.state.tempBoardTitle,
+                    description: this.state.tempBoardDescription,
+                    boardDescription: this.state.tempBoardDescription
+                })
+                .then(() => this.loadBoardData())
+                .then(() => this.resetModalForm())
+                .then(() => this.hideEditModal())
+            }
+        }
+
+    }
+
     async doNothing() {
         console.log(`nothing`)
     }
 
+    setInputValueName(property, nameVal) {
+        if (nameVal.length > 50) {
+            return;
+        }
+        this.setState({
+            [property]: nameVal
+        })
+    }
+
+    setInputValueDescription(property, descriptionVal) {
+        if (descriptionVal.length > 500) {
+            return;
+        }
+        this.setState({
+            [property]: descriptionVal
+        })
+    }
 
     render() {
         const votesText = `Votes`;
@@ -261,6 +355,43 @@ class Board extends React.Component {
                     <div className="container board-container">
                         <div className="row board-header">
                             <div className="col-md-12">
+                                {this.state.adminDisplay &&
+                                    <div className="settings-div">
+                                        <Dropdown className="board-settings-dropdown">
+                                            <Dropdown.Toggle className="board-settings" id="settings-dropdown">
+                                                <FontAwesomeIcon icon="ellipsis-v" />
+                                            </Dropdown.Toggle>
+                                            <Dropdown.Menu className="dropdown-menu-settings">
+                                                <Dropdown.Header>Board Settings</Dropdown.Header>
+                                                <Dropdown.Item className="dropdown-nav-item" onClick={() => this.showEditModal()}>Edit</Dropdown.Item>
+                                                <Dropdown.Item className="dropdown-nav-item" href="/signup">Delete</Dropdown.Item>
+                                            </Dropdown.Menu>
+                                        </Dropdown>
+                                        <Modal show={this.state.showEditModal} onHide={() => this.hideEditModal()}>
+                                            <Modal.Header closeButton>
+                                                <Modal.Title>Edit Board</Modal.Title>
+                                            </Modal.Header>
+                                            <Modal.Body>
+                                            <InputField 
+                                                type='text'
+                                                placeholder="Enter your new board title"
+                                                value={this.state.tempBoardTitle}
+                                                onChange={ (nameVal) => this.setInputValueName('tempBoardTitle', nameVal) }
+                                            />
+                                            <TextBox
+                                                placeholder="Enter an updated description of your project"
+                                                value={this.state.tempBoardDescription}
+                                                onChange={ (descriptionVal) => this.setInputValueDescription('tempBoardDescription', descriptionVal) }
+                                            />
+                                            </Modal.Body>
+                                            <Modal.Footer>
+                                                <Button variant="primary" className="save-changes-btn" onClick={() => this.submitChanges()}>
+                                                    Save Changes
+                                                </Button>
+                                            </Modal.Footer>
+                                        </Modal>
+                                    </div>
+                                }
                                 <h3 className="board-heading">Provide suggestions for <span className="board-title">{this.state.boardTitle}</span></h3>
                             </div>
                             <div className="col-md-12">
@@ -291,7 +422,11 @@ class Board extends React.Component {
                                             <li key={suggestion._id}>
                                                 <p className="suggestion-title">{suggestion.title}</p>
                                                 <p className="suggestion-description">{suggestion.description}</p>
-                                                <p className="suggestion-details"><span className="suggestion-username">{suggestion.username}</span>&nbsp;•&nbsp;<span className="suggestion-time">{suggestion.createdAt}</span></p>
+                                                <p className="suggestion-details">
+                                                    <span className="suggestion-username">{suggestion.username}</span>
+                                                    &nbsp;•&nbsp;<span className="suggestion-time">{suggestion.createdAt}</span>
+                                                    {this.state.adminDisplay && <span>&nbsp;•&nbsp;<a className="delete" onClick={() => this.deleteSuggestion(suggestion._id)}>Delete</a></span>}
+                                                </p>
                                                 <UpvoteButton
                                                     text={<span><FontAwesomeIcon icon="caret-up" />&nbsp;{suggestion.upvotes.length}</span>}
                                                     onClick={() => this.addOne(suggestion._id)}

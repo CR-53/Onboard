@@ -13,10 +13,10 @@ import { observer } from "mobx-react";
 import UserStore from "./stores/UserStore";
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fab } from '@fortawesome/free-brands-svg-icons'
-import { faChartLine, faComments, faPencilRuler, faCaretUp, faCaretDown, faSort, faUser } from '@fortawesome/free-solid-svg-icons'
+import { faChartLine, faCog, faComments, faPencilRuler, faCaretUp, faCaretDown, faEllipsisV, faSort, faUser  } from '@fortawesome/free-solid-svg-icons'
 import Board from "./components/Board";
 
-library.add(fab, faChartLine, faComments, faPencilRuler, faCaretUp, faCaretDown, faSort, faUser)
+library.add(fab, faChartLine, faCog, faComments, faPencilRuler, faCaretUp, faCaretDown, faEllipsisV, faSort, faUser)
 
 class App extends React.Component {
 

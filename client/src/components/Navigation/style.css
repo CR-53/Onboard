@@ -39,7 +39,6 @@ a:hover {
     width: 100px !important;
     min-width: 100px !important;
     left: -44px !important;
-    background: rgb(11,28,43);
     background: linear-gradient(5deg, rgba(11,28,43,1) 0%, rgba(10,37,62,1) 56%, rgba(10,37,62,1) 100%);
     border-radius: 10px;
 }
@@ -55,6 +54,10 @@ a:hover {
 
 button#login-dropdown {
     max-width: 250px;
+}
+
+button#login-dropdown:hover {
+    background: linear-gradient(to right,#1c5690, #002952) !important;
 }
 
 .dropdown-item:focus, .dropdown-item:hover {

@@ -38,12 +38,12 @@ module.exports = {
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   },
-//   // delete a suggestion
-//   remove: function(req, res) {
-//     db.Suggestion
-//       .findById({ _id: req.params.id })
-//       .then(dbModel => dbModel.remove())
-//       .then(dbModel => res.json(dbModel))
-//       .catch(err => res.status(422).json(err));
-//   }
+  // delete a suggestion
+  remove: function(req, res) {
+    db.Suggestion
+      .findById({ _id: req.params.id })
+      .then(dbModel => dbModel.remove())
+      .then(dbModel => res.json(dbModel))
+      .catch(err => res.status(422).json(err));
+  }
 };

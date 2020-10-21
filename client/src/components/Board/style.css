@@ -7,13 +7,53 @@
 }
 
 .board-header {
-    /* background: linear-gradient(to right #0e3c68, #173859) !important; */
     background: linear-gradient(to right,#17406b, #132e4a) !important;
     border-radius: 10px;
     padding: 0px 20px 0px 20px;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
 }
+
+.settings-div {
+    position: absolute;
+    right: 0;
+}
+
+#settings-dropdown {
+    color: white;
+    border-radius: 8px;
+    width: 35px;
+    position: absolute;
+    right: 0;
+    border-color: transparent;
+    top: 20px;
+    background: linear-gradient(to right,#6b6b6b, #9c9999) !important;
+}
+
+#settings-dropdown:hover {
+    background: linear-gradient(to right,#4e4e4e, #2b2b2b) !important;
+}
+
+button#settings-dropdown::after {
+    display: none;
+}
+
+.dropdown-menu-settings {
+    transform: translate(-125px, 60px) !important;
+    text-align: right;
+    width: 125px;
+    min-width: 125px;
+    background: linear-gradient(5deg, rgba(11,28,43,1) 0%, rgba(10,37,62,1) 56%, rgba(10,37,62,1) 100%);
+}
+
+.dropdown-menu-settings .dropdown-header {
+    padding: 5px 14px 2px 20px !important;
+}
+
+.dropdown-menu-settings .dropdown-item {
+    padding-right: 14px !important;
+}
+
 .board-heading {
     margin-top: 10px;
     margin-left: 10px;
@@ -29,6 +69,12 @@
     margin-left: 10px;
     margin-bottom: 40px;
     color: #bbb9b9 !important;
+    padding-right: 15px;
+}
+
+.admin-info {
+    font-size: 14px;
+    padding-left: 25px;
 }
 
 .board-button-row {
@@ -39,7 +85,6 @@
 
 .board-suggestions-row {
     padding: 0px 20px 0px 20px;
-    /* background: linear-gradient(to right,#17406b, #132e4a) !important; */
     background: linear-gradient(to right,#204368, #0a253e) !important;
     border-bottom: 1px solid #80808038;
     border-top: 1px solid #80808038;
@@ -91,6 +136,10 @@ li {
     margin-bottom: 0px;
 }
 
+.delete {
+    color: #c92b2b !important;
+}
+
 .upvote {
     position: absolute;
     top: 0px;
@@ -132,9 +181,48 @@ li {
     padding-right: 15px !important;
 }
 
+.modal-content {
+    border-radius: 10px;
+    border: transparent !important;
+    box-shadow: 1px 1px 12px 5px #00000066;
+    top: 130px;
+}
+
+.modal-header {
+    background: linear-gradient(to right,#17406b, #132e4a) !important;
+    border-bottom: 0px !important;
+    padding: 20px 20px 10px 20px;
+}
+
+.close {
+    color: #ffffff !important;
+}
+
+.modal-title {
+    color: #ffffff;
+}
+
+.modal-body {
+    border-bottom: 1px solid #80808038;
+    border-top: 1px solid #80808038;
+    padding: 10px 20px 10px 20px;
+}
+
+.modal-body, .modal-footer {
+    background: linear-gradient(to right,#204368, #0a253e) !important;
+}
+
+.modal-footer {
+    border-top: 0px !important;
+    padding: 10px 20px 16px 20px;
+}
+
+.modal-body textarea {
+    height: 140px;
+}
+
 
 /* MEDIA QUERIES */ 
-
 
 @media screen and (max-width: 991px) {
     .suggestion-title {

@@ -52,15 +52,17 @@ class Navigation extends React.Component {
                         <img src={logo} className="logo" alt="Logo" />
                     </Navbar.Brand>
                     <Nav className="ml-auto">
-                        <Nav.Link as={Link} to="/new-board">Create a board</Nav.Link>
-                        <Dropdown>
-                            <Dropdown.Toggle className="btn-background" id="login-dropdown">
-                                <FontAwesomeIcon icon="user" /> {UserStore.username}
-                            </Dropdown.Toggle>
-                            <Dropdown.Menu className="dropdown-menu-loggedin">
-                                <Dropdown.Item className="dropdown-nav-item" href="/login">Logout</Dropdown.Item>
-                            </Dropdown.Menu>    
-                        </Dropdown>
+                        <Nav.Link className="create-a-board-link" as={Link} to="/new-board">Create a board</Nav.Link>
+                        <div className="center-wrap">
+                            <Dropdown>
+                                <Dropdown.Toggle className="btn-background" id="login-dropdown">
+                                    <FontAwesomeIcon icon="user" /> {UserStore.username}
+                                </Dropdown.Toggle>
+                                <Dropdown.Menu className="dropdown-menu-loggedin">
+                                    <Dropdown.Item className="dropdown-nav-item" href="/login">Logout</Dropdown.Item>
+                                </Dropdown.Menu>    
+                            </Dropdown>
+                        </div>
                     </Nav>
                 </Navbar>
             );

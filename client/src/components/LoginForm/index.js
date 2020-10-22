@@ -22,7 +22,7 @@ class LoginForm extends React.Component {
 
     setInputValue(property, val) {
         val = val.trim();
-        if (val.length > 15) {
+        if (val.length > 18) {
             return;
         }
         this.setState({

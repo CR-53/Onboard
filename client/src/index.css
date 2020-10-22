@@ -307,3 +307,47 @@ button:focus {
   font-size: 16px;
   margin-bottom: 0px !important;
 }
+
+/* MEDIA QUERIES */
+
+@media screen and (max-width: 767px) {
+  .first-section {
+    margin-bottom: 3rem;
+  }
+
+  .new-section {
+    margin-bottom: 3rem;
+    margin-top: 3rem;
+  }
+
+  .new-board-row {
+    max-width: 100% !important;
+  }
+
+  #settings-dropdown {
+    top: 8px !important;
+    right: 8px !important;
+  }
+
+}
+
+@media screen and (max-width: 425px) {
+
+  .ml-auto {
+      margin-right: auto!important;
+  }
+
+  .submit-btn {
+    min-width: 200px;
+  }
+
+}
+
+@media screen and (max-width: 410px) {
+
+  #settings-dropdown {
+    top: 0px !important;
+    right: 6px !important;
+  }
+
+}

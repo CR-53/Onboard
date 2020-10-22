@@ -54,3 +54,17 @@
     font-size: 15px;
     color: #bbb9b9;
 }
+
+
+/* MEDIA QUERIES */
+@media screen and (max-width: 991px) {
+    .card-body {
+        padding: 1rem;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .card {
+        margin-bottom: 20px;
+    }
+}

@@ -233,7 +233,7 @@ class Board extends React.Component {
         API.deleteSuggestion(id).then(() => this.loadSuggestions(this.state.boardID))
     }
 
-    async sortByVotes(boardID) {
+    async sortByNewest(boardID) {
         boardID = this.state.boardID;
         API.getSuggestionsByBoardID(boardID).then(res => {
             if (this.state.dateDescending) {
@@ -243,7 +243,7 @@ class Board extends React.Component {
                 })
             }
             else {
-                res.data.reverse();
+                res.data.reverse()
                 this.setState({
                     suggestions: res.data,
                     dateDescending: true
@@ -252,7 +252,7 @@ class Board extends React.Component {
         })
     }
 
-    async sortByNewest(boardID) {
+    async sortByVotes(boardID) {
         boardID = this.state.boardID;
         API.findSuggestionByBoardIdSortByVotes(boardID).then(res => {
             if (this.state.votesDescending) {

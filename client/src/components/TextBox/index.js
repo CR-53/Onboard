@@ -1,6 +1,5 @@
 import React from "react";
 import "./style.css";
-// import { TextArea } from 'react-bootstrap';
 
 class TextBox extends React.Component {
     render() {

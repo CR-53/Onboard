@@ -3,9 +3,10 @@ import "./style.css";
 import UserStore from "../../stores/UserStore";
 import InputField from "../../components/InputField";
 import TextBox from "../../components/TextBox";
-import SubmitButton from "../../components/SubmitButton";
+import SuggestionButton from "../../components/SuggestionButton";
 import { observer } from "mobx-react";
 import API from "../../utils/API";
+import Loader from 'react-loader-spinner';
 
 class NewBoard extends React.Component {
 
@@ -16,8 +17,10 @@ class NewBoard extends React.Component {
             title: '',
             description: '',
             owner: '',
-            // number to add to slug if not unique
+            slug: '',
+            // checking slug
             checkNumber: 0,
+            checkingSlug: false,
             // error messages
             noBoardTitle: false,
             noBoardDescription: false,
@@ -97,21 +100,6 @@ class NewBoard extends React.Component {
         }, 4000)
     }
 
-    // checks if slug already exists in database, if so adds a number to the end to make it unique
-    async slugCheck(slug) {
-        var updateCheckNumber = this.state.checkNumber + 1;
-        this.setState({
-            checkNumber: updateCheckNumber
-        })
-        API.getBoards().then(res => {
-            res.data.forEach(board => {
-                if (slug === board.slug) {
-                    slug = slug + this.state.checkNumber;
-                    this.slugCheck();
-                }
-            })
-        })
-    }
 
     async saveNewBoard() {
         if (!this.state.title && !this.state.description) {
@@ -144,18 +132,53 @@ class NewBoard extends React.Component {
         }
         var slug = this.state.title.split(' ').join('-');
         slug = slug.toLowerCase();
-        await this.slugCheck(slug);
-        // wait until above has been run
-        console.log(`slug after check = ` + slug);
-        API.saveBoard({
-            title: this.state.title,
-            description: this.state.description,
-            owner: this.state.owner,
-            slug: slug
+        this.slugCheck(slug)
+    }
+
+    // checks if slug exists in database before saving new board
+    async slugCheck(slug) {
+        this.setState({
+            checkingSlug: true
         })
-            .then(() => console.log(`new board created: ` + this.state.title + " | " + this.state.description + " | " + this.state.owner + " | " + slug))
-            .then(() => this.resetForm())
-            .catch(err => console.log(err));
+        API.getBoardBySlug(slug).then(res => {
+            if (res.data.length === 1) {
+                var updateCheckNumber = this.state.checkNumber + 1;
+                this.setState({
+                    checkNumber: updateCheckNumber
+                })
+                setTimeout(() => {
+                    if (this.state.checkNumber < 2) {
+                        const hyphen = "-"
+                        slug = slug + hyphen + this.state.checkNumber 
+                    }
+                    else {
+                        let popSlug = slug.substr(0, slug.lastIndexOf("-") + 1)
+                        // const hyphen = "-"
+                        slug = popSlug + this.state.checkNumber
+                    }
+                }, 1000)
+                setTimeout(() => {
+                    this.slugCheck(slug)
+                }, 1500)
+            }
+            else {
+                var checkedSlug = slug;
+                this.setState({
+                    checkNumber: 0,
+                    checkingSlug: false
+                })
+                API.saveBoard({
+                    title: this.state.title,
+                    description: this.state.description,
+                    owner: this.state.owner,
+                    slug: checkedSlug
+                })
+                    .then(() => this.resetForm())
+                    .then(() => window.location.href = "/board/" + checkedSlug)
+                    .catch(err => console.log(err))
+                return;
+            }
+        })
     }
 
     render() {
@@ -174,33 +197,41 @@ class NewBoard extends React.Component {
                         <h3 className="section-heading">Create a new feedback board</h3>
                     </div>
                     <div className="col-md-12">
-                        <InputField
-                            type='text'
-                            placeholder="Enter your project name"
-                            value={this.state.title}
-                            onChange={(nameVal) => this.setInputValueName('title', nameVal)}
-                        />
-                        <TextBox
-                            placeholder="Enter a short description of your project"
-                            value={this.state.description}
-                            onChange={(descriptionVal) => this.setInputValueDescription('description', descriptionVal)}
-                        />
-                        <SubmitButton
-                            text="Create"
-                            onClick={() => this.saveNewBoard()}
-                        />
-                        {this.state.noBoardTitle &&
-                            <h4 className="error">{errorMessages[0]}</h4>
-                        }
-                        {this.state.noBoardDescription &&
-                            <h4 className="error">{errorMessages[1]}</h4>
-                        }
-                        {this.state.noBoardTitleOrDescription &&
-                            <h4 className="error">{errorMessages[2]}</h4>
-                        }
-                        {this.state.userNotLoggedIn &&
-                            <h4 className="error">{errorMessages[3]}</h4>
-                        }
+                        <div className="center-wrap">
+                            <InputField
+                                type='text'
+                                placeholder="Enter your project name"
+                                value={this.state.title}
+                                onChange={(nameVal) => this.setInputValueName('title', nameVal)}
+                            />
+                            <TextBox
+                                placeholder="Enter a short description of your project"
+                                value={this.state.description}
+                                onChange={(descriptionVal) => this.setInputValueDescription('description', descriptionVal)}
+                            />
+                            <SuggestionButton
+                                text="Create board"
+                                onClick={() => this.saveNewBoard()}
+                            />
+                            {this.state.noBoardTitle &&
+                                <h4 className="error">{errorMessages[0]}</h4>
+                            }
+                            {this.state.noBoardDescription &&
+                                <h4 className="error">{errorMessages[1]}</h4>
+                            }
+                            {this.state.noBoardTitleOrDescription &&
+                                <h4 className="error">{errorMessages[2]}</h4>
+                            }
+                            {this.state.userNotLoggedIn &&
+                                <h4 className="error">{errorMessages[3]}</h4>
+                            }
+                            {this.state.checkingSlug && 
+                                <div className="creating-board-div">
+                                <Loader className="loader" type="Rings" color="#03dba7" height="50" width="50" />
+                                <h4 className="creating-board">Creating your board, please wait...</h4>
+                            </div>
+                            }
+                        </div>
                     </div>
                 </div>
             </div>

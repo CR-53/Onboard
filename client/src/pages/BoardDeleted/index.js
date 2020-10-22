@@ -57,14 +57,16 @@ class BoardDeleted extends React.Component {
             return (
                 <div className="app">
                     <div className="container">
-                        <h3>Board successfully deleted by <span className="username">{UserStore.username}</span></h3>
-                        
-                        <a href="/"><SubmitButton
-                            text={" Return Home"}
-                            disabled={false}
-                            onClick={ () => this.doNothing() }
-                        /></a>
-
+                        <div className="row first-section">
+                            <div className="col-md-12">
+                                <h3 className="section-heading">Board successfully deleted by <span className="username">{UserStore.username}</span></h3>
+                                <a href="/"><SubmitButton
+                                    text={" Return Home"}
+                                    disabled={false}
+                                    onClick={ () => this.doNothing() }
+                                /></a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             )

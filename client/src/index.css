@@ -27,8 +27,9 @@ body {
   background: linear-gradient(to right, #02386E, #00264D) !important;
 }
 
-.root {
-  padding-bottom: 60px;
+html, body {
+  height: 100%;
+  margin: 0;
 }
 
 .username {
@@ -76,7 +77,6 @@ a:hover {
 .center-wrap {
   text-align: center;
 }
-
 
 /* === BUTTON CSS ===  */
 .new-board-btn {
@@ -205,6 +205,12 @@ a:hover {
   cursor: pointer;
 }
 
+.center-wrap .suggestion-btn {
+  float: unset;
+  margin-top: 0px;
+  margin-right: 0px;
+}
+
 /* === FORM CSS === */
 .loginForm, .signupForm {
   box-sizing: border-box;
@@ -265,4 +271,39 @@ button:focus {
   margin-top: 10px;
   color: #bbb9b9 !important;
   font-style: italic;
+}
+
+.success {
+  font-size: 18px;
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 30px;
+  color: #bbb9b9 !important;
+  font-style: italic;
+}
+
+.creating-board {
+  font-size: 15px;
+  text-align: center;
+  margin-top: 10px;
+  color: #03dba7 !important;
+  font-style: italic;
+  display: inline-block;
+  margin-left: 20px;
+}
+
+.loader {
+  width: 100%;
+  height: 100;
+  display: inline-block;
+}
+
+.creating-board-div {
+  text-align: center;
+  margin: 20px auto 0px auto;
+}
+
+.descriptive-text {
+  font-size: 16px;
+  margin-bottom: 0px !important;
 }

@@ -17,4 +17,8 @@ router
   .route("/boardslug/:slug")
   .get(boardsController.findBySlug);
 
+router
+  .route("/boardtitle/:slug")
+  .get(boardsController.findByTitle);
+
 module.exports = router;

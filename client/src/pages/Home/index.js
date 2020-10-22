@@ -2,11 +2,90 @@ import React from "react";
 import "./style.css";
 import { observer } from "mobx-react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Card } from 'react-bootstrap';
+import { Card } from 'react-bootstrap';
+import InputField from '../../components/InputField';
+import SubmitButton from '../../components/SubmitButton';
+import SuggestionButton from '../../components/SuggestionButton';
+import API from "../../utils/API";
 
 class Home extends React.Component {
 
+    constructor(props) {
+        super(props);
+        this.state = {
+            // search
+            search: '',
+            noSearchValue: false,
+            searchActive: false,
+            couldNotFindBoards: false,
+            foundBoards: []
+        }
+    }
+
+    setInputValueSearch(property, val) {
+        if (val.length > 30) {
+            return;
+        }
+        this.setState({
+            [property]: val
+        })
+    }
+
+    resetSearchField() {
+        this.setState({
+            search: ''
+        })
+    }
+
+    resetMessages() {
+        setTimeout(() => {
+            this.setState({
+                noSearchValue: false,
+                searchActive: false,
+                couldNotFindBoards: false,
+            })
+        }, 4000)
+    }
+
+    async searchForBoard() {
+        if (!this.state.search) {
+            this.setState({
+                searchActive: true,
+                noSearchValue: true
+            })
+            this.resetMessages();
+            return;
+        }
+        let searchQuery = this.state.search.toLowerCase();
+        API.getBoardByTitle(searchQuery).then(res => {
+            if (res.data.length > 0) {
+                this.setState({
+                    foundBoards: res.data
+                })
+            }
+            else {
+                this.setState({
+                    searchActive: true,
+                    couldNotFindBoards: true,
+                    foundBoards: []
+                })
+                this.resetMessages();
+            }
+        })
+            .then(() => this.resetSearchField())
+    }
+
+    async doNothing() {
+    }
+
     render() {
+
+        const messages = [
+            "Enter a word in the field above to search",
+            "Could not find any matching boards",
+            "New boards found. Click on a board to view:"
+        ]
+
         return (
             <div className="app">
                 <div className="container">
@@ -49,39 +128,66 @@ class Home extends React.Component {
                             </Card>
                         </div>
                     </div>
+
                     <div className="row new-section">
                         <div className="col-md-12">
-                            <h3 className="section-heading">View popular feedback boards</h3>
+                            <h3 className="section-heading">Ready to get more in tune with your users?</h3>
                             <hr className="section-hr"></hr>
-                        </div>
-                        <div className="col-md-3">
-                            <p>board 1</p>
-                        </div>
-                        <div className="col-md-3">
-                            <p>board 2</p>
-                        </div>
-                        <div className="col-md-3">
-                            <p>board 3</p>
-                        </div>
-                        <div className="col-md-3">
-                            <p>board 4</p>
+                            <div className="center-wrap">
+                                <a href="/new-board">
+                                    <SuggestionButton
+                                        text="Create a board"
+                                        onClick={() => this.doNothing()}
+                                    />
+                                </a>
+                            </div>
                         </div>
                     </div>
-                    <div className="row new-section">
+
+                    <div className="row new-section search-section">
                         <div className="col-md-12">
                             <h3 className="section-heading">Search for a feedback board</h3>
                             <hr className="section-hr"></hr>
                             <div className="center-wrap">
-                                <a href="/new-board"><Button className="new-board-btn btn-background">Search</Button></a>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="row new-section">
-                        <div className="col-md-12">
-                            <h3 className="section-heading">Ready to get more intune with your users?</h3>
-                            <hr className="section-hr"></hr>
-                            <div className="center-wrap">
-                                <a href="/new-board"><Button className="new-board-btn btn-background">Create a new board</Button></a>
+                                {this.state.foundBoards.length > 0 &&
+                                    <h4 className="success">{messages[2]}</h4>
+                                }
+                                {this.state.foundBoards.length ? (
+                                    <ul className="search-results">
+                                        {this.state.foundBoards.map(board => (
+                                            <li key={board._id}>
+                                                <div className="board-search">
+                                                    <a className="board-search-title-link" href={`/board/${board.slug}`}>{board.title}</a>
+                                                    <p className="board-search-description">
+                                                        {board.description.length > 80 ?
+                                                            `${board.description.substring(0, 80 - 3)}...` : board.description}
+                                                    </p>
+                                                </div>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                        <div></div>
+                                    )}
+                                <InputField
+                                    type='text'
+                                    placeholder="Search for a board by title"
+                                    value={this.state.search}
+                                    onChange={(val) => this.setInputValueSearch('search', val)}
+                                />
+                                <SubmitButton
+                                    text='Search'
+                                    onClick={() => this.searchForBoard()}
+                                />
+                                {!this.state.searchActive &&
+                                    <h4 className="note">Enter a key word to find all boards that match</h4>
+                                }
+                                {this.state.noSearchValue &&
+                                    <h4 className="error">{messages[0]}</h4>
+                                }
+                                {this.state.couldNotFindBoards &&
+                                    <h4 className="error">{messages[1]}</h4>
+                                }
                             </div>
                         </div>
                     </div>

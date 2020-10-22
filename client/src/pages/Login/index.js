@@ -55,10 +55,6 @@ class Login extends React.Component {
                 UserStore.isLoggedIn = false;
                 UserStore.username = '';
                 window.location.href='/'
-                console.log(`logged out`)
-            }
-            else {
-                console.log(`else`)
             }
 
         }
@@ -86,14 +82,16 @@ class Login extends React.Component {
                 return (
                     <div className="app">
                         <div className="container">
-                            <h3>Welcome, <span className="username">{UserStore.username}</span>!</h3>
-                            
-                            <a href="/"><SubmitButton
-                                text={"Log out"}
-                                disabled={false}
-                                onClick={ () => this.doLogout() }
-                            /></a>
-
+                            <div className="row first-section">
+                                <div className="col-md-12">
+                                    <h3 className="section-heading">Welcome, <span className="username">{UserStore.username}</span>!</h3>
+                                    <a href="/"><SubmitButton
+                                        text={"Log out"}
+                                        disabled={false}
+                                        onClick={ () => this.doLogout() }
+                                    /></a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 )
@@ -103,10 +101,12 @@ class Login extends React.Component {
                 <div className="app">
                     <div className="container">
                         <LoginForm />
-                        <a href="/signup"><SubmitButton
+                        <a href="/signup">
+                            <SubmitButton
                                 text={"Sign up"}
                                 disabled={false}
-                        /></a>
+                            />
+                        </a>
                     </div>
                 </div>
             )

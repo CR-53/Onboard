@@ -30,7 +30,6 @@ const db = mysql.createConnection({
 
 db.connect(function(err) {
   if (err) {
-    console.log(`DB error`);
     throw err;
     return false;
   }

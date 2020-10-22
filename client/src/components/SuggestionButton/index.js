@@ -1,6 +1,5 @@
 import React from "react";
 import "./style.css";
-// import { Button } from 'react-bootstrap';
 
 class SuggestionButton extends React.Component {
     

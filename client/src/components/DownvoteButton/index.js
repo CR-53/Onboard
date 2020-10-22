@@ -1,6 +1,5 @@
 import React from "react";
 import "./style.css";
-// import { Button } from 'react-bootstrap';
 
 class DownvoteButton extends React.Component {
     

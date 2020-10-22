@@ -8,3 +8,12 @@
     margin: auto;
     margin-top: 70px;
 }
+
+textarea {
+    height: 100px;
+}
+
+.new-board-row .suggestion-btn {
+    float: unset;
+    margin: 10px auto;
+}

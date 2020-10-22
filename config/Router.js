@@ -76,7 +76,6 @@ class Router {
             let password = bcrypt.hashSync(req.body.password, 9);
 
             username = username.toLowerCase();
-            console.log(username, password)
 
             if (username.length > 15) {
                 res.json({

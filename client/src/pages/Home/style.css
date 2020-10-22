@@ -28,3 +28,29 @@
     font-size: 16px;
     color: #dadada !important;
 }
+
+.search-section input {
+    max-width: 400px !important;
+}
+
+.search-section .inputField {
+    padding-top: 0px;
+}
+
+.search-section .note {
+    text-align: center !important;
+}
+
+.search-results li {
+    height: auto;
+    margin-bottom: 10px;
+}
+
+.board-search-title-link {
+    font-size: 20px;
+}
+
+.board-search-description {
+    font-size: 15px;
+    color: #bbb9b9;
+}

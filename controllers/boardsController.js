@@ -11,9 +11,14 @@ module.exports = {
       .catch(err => res.status(422).json(err));
   },
   findBySlug: function(req, res) {
-    console.log(req.params)
     db.Board
     .find({slug: req.params.slug})
+    .then(dbModel => res.json(dbModel))
+    .catch(err => res.status(422).json(err))
+  },
+  findByTitle: function(req, res) {
+    db.Board
+    .find({slug: {"$regex": req.params.slug}})
     .then(dbModel => res.json(dbModel))
     .catch(err => res.status(422).json(err))
   },

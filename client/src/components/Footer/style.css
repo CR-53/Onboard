@@ -1,10 +1,11 @@
 .footer {
-    /* margin-top: 40px;  */
     width: 100%;
     background: rgb(11,28,43);
     background: linear-gradient(to right, rgba(10,37,62,1), rgba(11,28,43,1)) !important;
     padding: 20px 20px 20px 20px !important;
-    height: 100px;
+    height: 100px;    
+    position: absolute;
+    bottom: 0;
 }
 
 .footer-text {
@@ -21,3 +22,9 @@
 .footer-link-text {
     font-family: 'Roboto Slab', serif;
 }
+
+.wrapper {
+    position: relative;
+    min-height: 100vh;
+  }
+  

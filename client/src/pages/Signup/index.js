@@ -54,10 +54,6 @@ class Signup extends React.Component {
                 UserStore.isLoggedIn = false;
                 UserStore.username = '';
                 window.location.href='/'
-                console.log(`logged out`)
-            }
-            else {
-                console.log(`else`)
             }
 
         }

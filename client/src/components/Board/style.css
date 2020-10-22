@@ -217,6 +217,12 @@ li {
     padding: 10px 20px 16px 20px;
 }
 
+.modal-body .error {
+    text-align: left !important;
+    float: left;
+    margin-right: auto;
+}
+
 .modal-footer .error {
     text-align: left !important;
     float: left;

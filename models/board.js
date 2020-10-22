@@ -15,6 +15,7 @@ const boardSchema = new mongoose.Schema({
   },
   slug: {
     type: String,
+    unique: true
   }
 }, {timestamps: true});
 

@@ -1,7 +1,6 @@
 import React from "react";
 import "./style.css";
 import { observer } from "mobx-react";
-import LoginForm from "../../components/LoginForm";
 import SubmitButton from "../../components/SubmitButton";
 import UserStore from "../../stores/UserStore";
 
@@ -55,10 +54,6 @@ class Success extends React.Component {
                 UserStore.isLoggedIn = false;
                 UserStore.username = '';
                 window.location.href='/'
-                console.log(`logged out`)
-            }
-            else {
-                console.log(`else`)
             }
 
         }
@@ -68,13 +63,20 @@ class Success extends React.Component {
         }
     }
 
+    async doNothing() {
+    }
+
     render() {
 
         if (UserStore.loading) {
             return (
                 <div className="app">
                     <div className="container">
-                        Loading, please wait...
+                        <div className="row first-section">
+                            <div className="col-md-12">
+                                <h3 className="section-heading">Loading, please wait...</h3>
+                            </div>
+                        </div>
                     </div>
                 </div>
             )
@@ -83,17 +85,20 @@ class Success extends React.Component {
         else {
 
             if (UserStore.isLoggedIn) {
+
                 return (
                     <div className="app">
                         <div className="container">
-                            Welcome {UserStore.username}
-                            
-                            <a href="/"><SubmitButton
-                                text={"Log out"}
-                                disabled={false}
-                                onClick={ () => this.doLogout() }
-                            /></a>
-
+                            <div className="row first-section">
+                                <div className="col-md-12">
+                                    <h3 className="section-heading">Welcome, <span className="username">{UserStore.username}</span></h3>
+                                    <a href="/"><SubmitButton
+                                        text={"Log out"}
+                                        disabled={false}
+                                        onClick={ () => this.doLogout() }
+                                    /></a>
+                                </div>
+                            </div>    
                         </div>
                     </div>
                 )
@@ -102,8 +107,18 @@ class Success extends React.Component {
             return (
                 <div className="app">
                     <div className="container">
-                        <p>You have successfully signed up, please login using the same credentials below.</p>
-                        <LoginForm />
+                        <div className="row first-section">
+                            <div className="col-md-12">
+                                <h3 className="section-heading">You have successfully signed up.<br></br>
+                                    Please continue to login.
+                                </h3>
+                                <a href="/login"><SubmitButton
+                                    text={"Log in"}
+                                    disabled={false}
+                                    onClick={ () => this.doNothing() }
+                                /></a>
+                            </div>
+                        </div>    
                     </div>
                 </div>
             )

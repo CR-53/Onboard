@@ -69,10 +69,6 @@ class App extends React.Component {
               UserStore.isLoggedIn = false;
               UserStore.username = '';
               window.location.href='/'
-              console.log(`logged out`)
-          }
-          else {
-              console.log(`else`)
           }
 
       }
@@ -85,18 +81,18 @@ class App extends React.Component {
   render() {
     return (
       <Router>
-        <div>
+        <div className="wrapper">
           <Navigation />
           <Wrapper>
             <Route exact path="/" component={Home} /> 
             <Route exact path="/new-board" component={NewBoard} />
             <Route exact path="/login" component={Login} />
             <Route exact path="/signup" component={Signup} />
-            {/* <Route exact path="/success" component={Success} /> */}
+            <Route exact path="/success" component={Success} />
             <Route exact path="/board/:id" component={Board} />
             <Route exact path="/board-deleted" component={BoardDeleted} />
           </Wrapper>
-          <Footer />
+        <Footer />
         </div>
     </Router>
     )

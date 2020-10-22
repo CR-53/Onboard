@@ -12,6 +12,9 @@ export default {
   getBoardBySlug: function(slug) {
     return axios.get("/api/boards/boardslug/" + slug);
   },
+  getBoardByTitle: function(slug) {
+    return axios.get("/api/boards/boardtitle/" + slug);
+  },
   // Deletes the board with the given id
   deleteBoard: function(id) {
     return axios.delete("/api/boards/" + id);

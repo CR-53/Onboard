@@ -46,7 +46,7 @@ a:hover {
 .dropdown-menu-loggedin {
     max-width: 250px !important;
     min-width: 100px !important;
-    left: 18px !important;
+    left: -5px !important;
     background: rgb(11,28,43);
     background: linear-gradient(5deg, rgba(11,28,43,1) 0%, rgba(10,37,62,1) 56%, rgba(10,37,62,1) 100%);
     border-radius: 10px;

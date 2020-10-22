@@ -50,7 +50,8 @@ class Board extends React.Component {
             noSuggestionTitleAndDescription: false,
             userNotLoggedIn: false,
             userNotLoggedInVote: false,
-            noEditBoardTitleAndDescription: false
+            noEditBoardTitleAndDescription: false,
+            deleteBoardPasswordNoMatch: false
         }
     }
 
@@ -78,7 +79,6 @@ class Board extends React.Component {
             else {
                 UserStore.loading = false;
                 UserStore.isLoggedIn = false;
-                console.log(`user is not logged in`)
             }
             const slug = this.props.match.params.id;
             API.getBoardBySlug(slug).then(res => {
@@ -94,7 +94,6 @@ class Board extends React.Component {
                         adminDisplay: true
                     })
                 }
-                console.log(`admin controls = ` + this.state.adminDisplay)
                 API.getSuggestionsByBoardID(res.data[0]._id).then(res => {
                     this.setState({
                         suggestions: res.data
@@ -179,7 +178,9 @@ class Board extends React.Component {
                 noSuggestionTitleAndDescription: false,
                 userNotLoggedIn: false,
                 userNotLoggedInVote: false,
-                noEditBoardTitleAndDescription: false
+                noEditBoardTitleAndDescription: false,
+                deleteBoardNoPassword: false,
+                deleteBoardPasswordNoMatch: false
             })
         }, 4000)
     }
@@ -366,9 +367,11 @@ class Board extends React.Component {
     }
 
     async deleteBoard() {
-        console.log(this.state.password)
         if (!this.state.password) {
-            console.log(`please enter your password`)
+            this.setState({
+                deleteBoardNoPassword: true
+            })
+            this.resetErrorMessages()
             return;
         }
 
@@ -396,8 +399,11 @@ class Board extends React.Component {
             }
 
             else if (result && result.success === false) {
+                this.setState({
+                    deleteBoardPasswordNoMatch: true
+                })
                 this.resetDeleteForm();
-                console.log(`wrong password or error`)
+                this.resetErrorMessages()
             }
         }
 
@@ -453,7 +459,6 @@ class Board extends React.Component {
     }
 
     async doNothing() {
-        console.log(`nothing`)
     }
 
     setInputValueName(property, nameVal) {
@@ -492,7 +497,9 @@ class Board extends React.Component {
             "Please enter a title and description for your suggestion",
             "You must be logged in to add a suggestion",
             "You must be logged in to vote",
-            "Please enter a board title or description to update"
+            "Please enter a board title or description to update",
+            "You need to enter a password to delete this board",
+            "Invalid password"
         ]
 
         if (this.state.loading === true) {
@@ -580,6 +587,12 @@ class Board extends React.Component {
                                                     value={this.state.password ? this.state.password : ''}
                                                     onChange={(val) => this.setInputValuePassword('password', val)}
                                                 />
+                                                {this.state.deleteBoardNoPassword &&
+                                                    <h4 className="error">{errorMessages[6]}</h4>
+                                                }
+                                                {this.state.deleteBoardPasswordNoMatch &&
+                                                    <h4 className="error">{errorMessages[7]}</h4>
+                                                }
                                             </Modal.Body>
                                             <Modal.Footer>
                                                 <h4 className="error">Warning: this action cannot be reversed</h4>

@@ -173,6 +173,24 @@ a:hover {
   box-shadow: 0 0 1pt 1pt #6ccf28;
 }
 
+.delete-btn {
+  font-family: 'Open Sans', sans-serif;
+  float: right;
+  color: #ffffff !important;
+  padding: 10px !important;
+  font-size: 14px !important;
+  font-weight: bold;
+  border-radius: 5px !important;
+  border-color: transparent !important;
+  background: linear-gradient(to right,#b32929, #7d1313) !important;
+  cursor: pointer;
+  box-shadow: 1px 1px 4px 1px #00000066;
+}
+
+.delete-btn:hover {
+  background: linear-gradient(to right,#8a1b1b, #580808) !important
+}
+
 .vote-btn {
   width: 100%;
   width: 50px;
@@ -231,4 +249,20 @@ button:focus {
 
 .login-text {
   margin-top: 70px;
+}
+
+.error {
+  font-size: 15px;
+  text-align: center;
+  margin-top: 10px;
+  color: #c92b2b !important;
+  font-style: italic;
+}
+
+.note {
+  font-size: 15px;
+  text-align: left;
+  margin-top: 10px;
+  color: #bbb9b9 !important;
+  font-style: italic;
 }

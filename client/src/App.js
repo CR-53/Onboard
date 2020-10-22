@@ -9,6 +9,7 @@ import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Success from './pages/Success'
 import Home from './pages/Home'
+import BoardDeleted from './pages/BoardDeleted'
 import { observer } from "mobx-react";
 import UserStore from "./stores/UserStore";
 import { library } from '@fortawesome/fontawesome-svg-core'
@@ -91,8 +92,9 @@ class App extends React.Component {
             <Route exact path="/new-board" component={NewBoard} />
             <Route exact path="/login" component={Login} />
             <Route exact path="/signup" component={Signup} />
-            <Route exact path="/success" component={Success} />
+            {/* <Route exact path="/success" component={Success} /> */}
             <Route exact path="/board/:id" component={Board} />
+            <Route exact path="/board-deleted" component={BoardDeleted} />
           </Wrapper>
           <Footer />
         </div>

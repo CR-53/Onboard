@@ -35,12 +35,22 @@ class Board extends React.Component {
             // admin controls
             adminDisplay: false,
             showEditModal: false,
+            showDeleteModal: false,
             // edit board
             tempBoardTitle: '',
             tempBoardDescription: '',
+            // delete board
+            password: '',
             // sort suggestions
             votesDescending: true,
-            dateDescending: true
+            dateDescending: false,
+            // error messages
+            noSuggestionTitle: false,
+            noSuggestionDescription: false,
+            noSuggestionTitleAndDescription: false,
+            userNotLoggedIn: false,
+            userNotLoggedInVote: false,
+            noEditBoardTitleAndDescription: false
         }
     }
 
@@ -117,7 +127,7 @@ class Board extends React.Component {
                     adminDisplay: true
                 })
             }
-        })    
+        })
     }
 
     async loadSuggestions(boardID) {
@@ -161,21 +171,49 @@ class Board extends React.Component {
         })
     }
 
+    resetErrorMessages() {
+        setTimeout(() => {
+            this.setState({
+                noSuggestionTitle: false,
+                noSuggestionDescription: false,
+                noSuggestionTitleAndDescription: false,
+                userNotLoggedIn: false,
+                userNotLoggedInVote: false,
+                noEditBoardTitleAndDescription: false
+            })
+        }, 4000)
+    }
+
     async saveNewSuggestion() {
+        if (!this.state.title && !this.state.description) {
+            this.setState({
+                noSuggestionTitleAndDescription: true
+            })
+            this.resetErrorMessages();
+            return;
+        }
         if (!this.state.title) {
-            console.log(`no suggestion text`)
+            this.setState({
+                noSuggestionTitle: true
+            })
+            this.resetErrorMessages();
             return;
         }
         if (!this.state.description) {
-            console.log(`no suggestion description`)
+            this.setState({
+                noSuggestionDescription: true
+            })
+            this.resetErrorMessages();
             return;
         }
         if (!this.state.owner) {
-            console.log(`no suggestion owner`)
+            this.setState({
+                userNotLoggedIn: true
+            })
+            this.resetErrorMessages();
             return;
         }
-        // save suggestion to database here
-        console.log(`suggestion data: ` + this.state.title + " | " + this.state.description + " | " + this.state.owner + " | " + this.state.boardID)
+        // saves suggestion to the database
         API.saveSuggestion({
             title: this.state.title,
             description: this.state.description,
@@ -185,7 +223,6 @@ class Board extends React.Component {
             boardID: this.state.boardID,
             difference: 0
         })
-            .then(() => console.log(`new suggestion created: ` + this.state.title + " | " + this.state.description + " | " + this.state.owner + " | " + this.state.boardID))
             .then(() => this.resetNewSuggestionField())
             .then(() => this.loadSuggestions(this.state.boardID))
             .catch(err => console.log(err))
@@ -196,6 +233,25 @@ class Board extends React.Component {
     }
 
     async sortByVotes(boardID) {
+        boardID = this.state.boardID;
+        API.getSuggestionsByBoardID(boardID).then(res => {
+            if (this.state.dateDescending) {
+                this.setState({
+                    suggestions: res.data,
+                    dateDescending: false
+                })
+            }
+            else {
+                res.data.reverse();
+                this.setState({
+                    suggestions: res.data,
+                    dateDescending: true
+                })
+            }
+        })
+    }
+
+    async sortByNewest(boardID) {
         boardID = this.state.boardID;
         API.findSuggestionByBoardIdSortByVotes(boardID).then(res => {
             if (this.state.votesDescending) {
@@ -212,10 +268,6 @@ class Board extends React.Component {
                 })
             }
         })
-    }
-
-    async sortByNewst() {
-        alert(`sort by newest`)
     }
 
     async addOne(id) {
@@ -237,7 +289,10 @@ class Board extends React.Component {
                 .then(() => this.setDifference(id))
         }
         else {
-            alert(`you must be logged in to vote`)
+            this.setState({
+                userNotLoggedInVote: true
+            })
+            this.resetErrorMessages();
         }
     }
 
@@ -260,7 +315,10 @@ class Board extends React.Component {
                 .then(() => this.setDifference(id))
         }
         else {
-            alert(`you must be logged in to vote`)
+            this.setState({
+                userNotLoggedInVote: true
+            })
+            this.resetErrorMessages();
         }
     }
 
@@ -285,25 +343,94 @@ class Board extends React.Component {
         })
     }
 
+    async showDeleteModal() {
+        this.setState({
+            showDeleteModal: true
+        })
+    }
+
+    async hideDeleteModal() {
+        this.setState({
+            showDeleteModal: false
+        })
+    }
+
+    setInputValuePassword(property, val) {
+        val = val.trim();
+        if (val.length > 15) {
+            return;
+        }
+        this.setState({
+            [property]: val
+        })
+    }
+
+    async deleteBoard() {
+        console.log(this.state.password)
+        if (!this.state.password) {
+            console.log(`please enter your password`)
+            return;
+        }
+
+        try {
+            let res = await fetch('/login', {
+                method: 'post',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: this.state.owner,
+                    password: this.state.password
+                })
+            });
+
+            let result = await res.json();
+
+            if (result && result.success) {
+                API.deleteBoard(this.state.boardID)
+                    .catch(err => console.log(err))
+                    .then(() => {
+                        window.location.href = '/board-deleted'
+                    })
+            }
+
+            else if (result && result.success === false) {
+                this.resetDeleteForm();
+                console.log(`wrong password or error`)
+            }
+        }
+
+        catch (e) {
+            console.log(e);
+            this.resetDeleteForm();
+        }
+    }
+
+    async resetDeleteForm() {
+        this.setState({
+            password: ''
+        })
+    }
+
     async submitChanges(id) {
         if (this.state.tempBoardTitle || this.state.tempBoardDescription) {
             id = this.state.boardID;
-            console.log(`BOARD FOUND: ` + id)
             if (this.state.tempBoardTitle && !this.state.tempBoardDescription) {
                 API.updateBoard(id, {
                     title: this.state.tempBoardTitle
                 })
-                .then(() => this.loadBoardData())
-                .then(() => this.resetModalForm())
-                .then(() => this.hideEditModal())
+                    .then(() => this.loadBoardData())
+                    .then(() => this.resetModalForm())
+                    .then(() => this.hideEditModal())
             }
             else if (!this.state.tempBoardTitle && this.state.tempBoardDescription) {
                 API.updateBoard(id, {
                     description: this.state.tempBoardDescription
                 })
-                .then(() => this.loadBoardData())
-                .then(() => this.resetModalForm())
-                .then(() => this.hideEditModal())
+                    .then(() => this.loadBoardData())
+                    .then(() => this.resetModalForm())
+                    .then(() => this.hideEditModal())
             }
             else {
                 API.updateBoard(id, {
@@ -311,10 +438,16 @@ class Board extends React.Component {
                     description: this.state.tempBoardDescription,
                     boardDescription: this.state.tempBoardDescription
                 })
-                .then(() => this.loadBoardData())
-                .then(() => this.resetModalForm())
-                .then(() => this.hideEditModal())
+                    .then(() => this.loadBoardData())
+                    .then(() => this.resetModalForm())
+                    .then(() => this.hideEditModal())
             }
+        }
+        else {
+            this.setState({
+                noEditBoardTitleAndDescription: true
+            })
+            this.resetErrorMessages();
         }
 
     }
@@ -342,10 +475,25 @@ class Board extends React.Component {
     }
 
     render() {
+
+        // Icons + text
         const votesText = `Votes`;
         const votesNewest = <React.Fragment>{votesText}&nbsp;<FontAwesomeIcon icon="sort">Votes</FontAwesomeIcon></React.Fragment>
         const newestText = `Newest`;
         const sortNewest = <React.Fragment>{newestText}&nbsp;<FontAwesomeIcon icon="sort">Newest</FontAwesomeIcon></React.Fragment>
+
+        // Date formatting
+        var moment = require('moment');
+
+        // Error messages
+        const errorMessages = [
+            "Please enter a title for your suggestion",
+            "Please enter a description for your suggestion",
+            "Please enter a title and description for your suggestion",
+            "You must be logged in to add a suggestion",
+            "You must be logged in to vote",
+            "Please enter a board title or description to update"
+        ]
 
         if (this.state.loading === true) {
 
@@ -390,7 +538,7 @@ class Board extends React.Component {
                                             <Dropdown.Menu className="dropdown-menu-settings">
                                                 <Dropdown.Header>Board Settings</Dropdown.Header>
                                                 <Dropdown.Item className="dropdown-nav-item" onClick={() => this.showEditModal()}>Edit</Dropdown.Item>
-                                                <Dropdown.Item className="dropdown-nav-item" href="/signup">Delete</Dropdown.Item>
+                                                <Dropdown.Item className="dropdown-nav-item" onClick={() => this.showDeleteModal()}>Delete</Dropdown.Item>
                                             </Dropdown.Menu>
                                         </Dropdown>
                                         <Modal show={this.state.showEditModal} onHide={() => this.hideEditModal()}>
@@ -398,21 +546,45 @@ class Board extends React.Component {
                                                 <Modal.Title>Edit Board</Modal.Title>
                                             </Modal.Header>
                                             <Modal.Body>
-                                            <InputField 
-                                                type='text'
-                                                placeholder="Enter your new board title"
-                                                value={this.state.tempBoardTitle}
-                                                onChange={ (nameVal) => this.setInputValueName('tempBoardTitle', nameVal) }
-                                            />
-                                            <TextBox
-                                                placeholder="Enter an updated description of your project"
-                                                value={this.state.tempBoardDescription}
-                                                onChange={ (descriptionVal) => this.setInputValueDescription('tempBoardDescription', descriptionVal) }
-                                            />
+                                                <InputField
+                                                    type='text'
+                                                    placeholder="Enter your new board title"
+                                                    value={this.state.tempBoardTitle}
+                                                    onChange={(nameVal) => this.setInputValueName('tempBoardTitle', nameVal)}
+                                                />
+                                                <TextBox
+                                                    placeholder="Enter an updated description of your project"
+                                                    value={this.state.tempBoardDescription}
+                                                    onChange={(descriptionVal) => this.setInputValueDescription('tempBoardDescription', descriptionVal)}
+                                                />
+                                                <p className="note">Note: updating your board's title won't change the URL of your board</p>
                                             </Modal.Body>
                                             <Modal.Footer>
+                                                {this.state.noEditBoardTitleAndDescription &&
+                                                    <h4 className="error">{errorMessages[5]}</h4>
+                                                }
                                                 <Button variant="primary" className="save-changes-btn" onClick={() => this.submitChanges()}>
                                                     Save Changes
+                                                </Button>
+                                            </Modal.Footer>
+                                        </Modal>
+                                        <Modal show={this.state.showDeleteModal} onHide={() => this.hideDeleteModal()}>
+                                            <Modal.Header closeButton>
+                                                <Modal.Title>Delete Board</Modal.Title>
+                                            </Modal.Header>
+                                            <Modal.Body>
+                                                <p className="delete-board-text">Enter your password to confirm delete</p>
+                                                <InputField
+                                                    type='password'
+                                                    placeholder='Password'
+                                                    value={this.state.password ? this.state.password : ''}
+                                                    onChange={(val) => this.setInputValuePassword('password', val)}
+                                                />
+                                            </Modal.Body>
+                                            <Modal.Footer>
+                                                <h4 className="error">Warning: this action cannot be reversed</h4>
+                                                <Button variant="primary" className="delete-btn" onClick={() => this.deleteBoard()}>
+                                                    Delete Board
                                                 </Button>
                                             </Modal.Footer>
                                         </Modal>
@@ -450,7 +622,7 @@ class Board extends React.Component {
                                                 <p className="suggestion-description">{suggestion.description}</p>
                                                 <p className="suggestion-details">
                                                     <span className="suggestion-username">{suggestion.username}</span>
-                                                    &nbsp;•&nbsp;<span className="suggestion-time">{suggestion.createdAt}</span>
+                                                    &nbsp;•&nbsp;<span className="suggestion-time">{moment(suggestion.createdAt).fromNow()}</span>
                                                     {this.state.adminDisplay && <span>&nbsp;•&nbsp;<a className="delete" onClick={() => this.deleteSuggestion(suggestion._id)}>Delete</a></span>}
                                                 </p>
                                                 <UpvoteButton
@@ -463,6 +635,9 @@ class Board extends React.Component {
                                                 />
                                             </li>
                                         ))}
+                                        {this.state.userNotLoggedInVote &&
+                                            <h4 className="error">{errorMessages[4]}</h4>
+                                        }
                                     </ul>
                                 ) : (
                                         <p className="no-suggestion-text">There are currently no suggestions on this board, make one below.</p>
@@ -494,6 +669,18 @@ class Board extends React.Component {
                                     disabled={this.state.buttonDisabled}
                                     onClick={() => this.saveNewSuggestion()}
                                 ></SuggestionButton>
+                                {this.state.noSuggestionTitle &&
+                                    <h4 className="error">{errorMessages[0]}</h4>
+                                }
+                                {this.state.noSuggestionDescription &&
+                                    <h4 className="error">{errorMessages[1]}</h4>
+                                }
+                                {this.state.noSuggestionTitleAndDescription &&
+                                    <h4 className="error">{errorMessages[2]}</h4>
+                                }
+                                {this.state.userNotLoggedIn &&
+                                    <h4 className="error">{errorMessages[3]}</h4>
+                                }
                             </div>
                         </div>
                     </div>

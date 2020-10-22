@@ -217,8 +217,20 @@ li {
     padding: 10px 20px 16px 20px;
 }
 
+.modal-footer .error {
+    text-align: left !important;
+    float: left;
+    margin-right: auto;
+}
+
 .modal-body textarea {
     height: 140px;
+}
+
+.delete-board-text {
+    margin-bottom: -5px;
+    text-align: left;
+    font-size: 15px;
 }
 
 

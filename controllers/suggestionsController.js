@@ -14,7 +14,7 @@ module.exports = {
   findSuggestionByBoardId: function(req, res) {
     db.Suggestion
     .find({boardID: req.params.boardid})
-    .sort({ date: -1 })
+    .sort({ createdAt: -1 })
     .then(dbModel => res.json(dbModel))
     .catch(err => res.status(422).json(err))
   },

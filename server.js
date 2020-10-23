@@ -5,7 +5,7 @@ const mysql = require("mysql");
 const session = require("express-session");
 // const MySQLStore = require("express-mysql-session")(session);
 // const Router = require("./config/Router");
-const MongoDBStore = require('connect-mongodb-session')(session);
+// const MongoDBStore = require('connect-mongodb-session')(session);
 const routes = require("./routes");
 // const apiRoutes = require("./routes/apiRoutes");
 
@@ -23,9 +23,15 @@ if (process.env.NODE_ENV === "production") {
 
 // Connect to the Mongo DB
 mongoose.connect(
-  process.env.MONGODB_URI || "mongodb://localhost:27017/onboard",
-  { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true }
-  );
+  process.env.MONGODB_URI || 'mongodb://localhost/onboard',
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+    useFindAndModify: false
+  }
+);
+
   
 // Define routes here
 app.use(routes);

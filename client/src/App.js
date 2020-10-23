@@ -60,7 +60,6 @@ class App extends React.Component {
         const obj = getFromStorage('onboard_login');
         if (obj && obj.token) {
             const { token } = obj;
-            console.log(token)
             // Delete session
             API.deleteUserSession(token).then(res => {
                 if (res.data) {
@@ -69,9 +68,6 @@ class App extends React.Component {
                     window.location.href = '/'
                 }
             })
-        }
-        else {
-            console.log(`could not retrieve token`)
         }
     }
 

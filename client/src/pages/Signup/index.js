@@ -13,13 +13,11 @@ class Signup extends React.Component {
         const obj = getFromStorage('onboard_login');
         if (obj && obj.token) {
             const { token } = obj;
-            console.log(token)
             // Verify token
             API.findUserSession(
                 token).then(res => {
                     if (res.data) {
                         const id = res.data.userId;
-                        console.log(id)
                         API.getUserById(id).then(res => {
                             if (res.data) {
                                 UserStore.loading = false;
@@ -48,7 +46,6 @@ class Signup extends React.Component {
         const obj = getFromStorage('onboard_login');
         if (obj && obj.token) {
             const { token } = obj;
-            console.log(token)
             // Delete session
             API.deleteUserSession(token).then(res => {
                 if (res.data) {
@@ -57,9 +54,6 @@ class Signup extends React.Component {
                     window.location.href = '/login'
                 }
             })
-        }
-        else {
-            console.log(`could not retrieve token`)
         }
     }
 

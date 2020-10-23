@@ -406,7 +406,6 @@ class Board extends React.Component {
                         })
                 }
                 else {
-                    console.log(`error`);
                     this.resetDeleteForm();
                 }
             })

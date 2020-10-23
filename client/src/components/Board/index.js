@@ -120,7 +120,7 @@ class Board extends React.Component {
                     adminDisplay: true
                 })
             }
-        }, 500)
+        }, 1000)
     }
 
     async loadBoardData(slug) {

@@ -6,6 +6,7 @@ import TextBox from "../../components/TextBox";
 import SuggestionButton from "../../components/SuggestionButton";
 import { observer } from "mobx-react";
 import API from "../../utils/API";
+import { getFromStorage } from "../../stores/storage";
 import Loader from 'react-loader-spinner';
 
 class NewBoard extends React.Component {
@@ -30,34 +31,36 @@ class NewBoard extends React.Component {
     }
 
     async componentDidMount() {
-        try {
-            let res = await fetch('/isLoggedIn', {
-                method: 'post',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            })
-
-            let result = await res.json();
-
-            if (result && result.success) {
-                UserStore.loading = false;
-                UserStore.isLoggedIn = true;
-                UserStore.username = result.username;
-                this.setState({
-                    owner: UserStore.username
+        const obj = getFromStorage('onboard_login');
+        if (obj && obj.token) {
+            const { token } = obj;
+            // Verify token
+            API.findUserSession(
+                token).then(res => {
+                    if (res.data) {
+                        const id = res.data.userId;
+                        API.getUserById(id).then(res => {
+                            if (res.data) {
+                                UserStore.loading = false;
+                                UserStore.isLoggedIn = true;
+                                UserStore.username = res.data.username;
+                                this.setState({
+                                    owner: res.data.username
+                                })
+                            }
+                            else {
+                                UserStore.loading = false;
+                                UserStore.isLoggedIn = false;
+                            }
+                        })
+                    }
+                    else {
+                        UserStore.loading = false;
+                        UserStore.isLoggedIn = false;
+                    }
                 })
-            }
-
-            else {
-                UserStore.loading = false;
-                UserStore.isLoggedIn = false;
-            }
-
         }
-
-        catch (e) {
+        else {
             UserStore.loading = false;
             UserStore.isLoggedIn = false;
         }

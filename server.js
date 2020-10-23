@@ -3,8 +3,9 @@ const path = require("path");
 const mongoose = require("mongoose");
 const mysql = require("mysql");
 const session = require("express-session");
-const MySQLStore = require("express-mysql-session")(session);
-const Router = require("./config/Router");
+// const MySQLStore = require("express-mysql-session")(session);
+// const Router = require("./config/Router");
+const MongoDBStore = require('connect-mongodb-session')(session);
 const routes = require("./routes");
 // const apiRoutes = require("./routes/apiRoutes");
 
@@ -20,41 +21,65 @@ if (process.env.NODE_ENV === "production") {
   // change to "client/build"
 }
 
-// Connect to MySQL DB for user database
-const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'password',
-  database: 'onboard_login'
-})
+// // MONGO STORE
+// const store = new MongoDBStore({
+//   uri: 'mongodb://localhost:27017/onboard',
+//   collection: 'usersessions'
+// });
 
-db.connect(function(err) {
-  if (err) {
-    throw err;
-    return false;
-  }
-});
+// app.use(require('express-session')({
+//   secret: 'session-secret',
+//   cookie: {
+//     maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
+//   },
+//   store: store,
+//   // Boilerplate options, see:
+//   // * https://www.npmjs.com/package/express-session#resave
+//   // * https://www.npmjs.com/package/express-session#saveuninitialized
+//   resave: true,
+//   saveUninitialized: true
+// }));
 
-const sessionStore = new MySQLStore({
-  // session time to expire (set to 5 years)
-  expiration: (1825 * 86400 * 1000),
-  endConnectionOnClose: false
-}, db);
+// // Catch errors
+// store.on('error', function(error) {
+//   console.log(error);
+// });
+ 
+// MYSQL STORE
+// const db = mysql.createConnection({
+//   host: 'localhost',
+//   user: 'root',
+//   password: 'password',
+//   database: 'onboard_login'
+// })
 
-app.use(session({
-  key: 'session-key',
-  secret: 'session-secret',
-  store: sessionStore,
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    maxAge: (1825 * 86400 * 1000),
-    httpOnly: false
-  }
-}));
+// db.connect(function(err) {
+//   if (err) {
+//     throw err;
+//     return false;
+//   }
+// });
 
-new Router(app, db);
-// Send every other request to the React app
+// const sessionStore = new MySQLStore({
+//   // session time to expire (set to 5 years)
+//   expiration: (1825 * 86400 * 1000),
+//   endConnectionOnClose: false
+// }, db);
+
+// app.use(session({
+//   key: 'session-key',
+//   secret: 'session-secret',
+//   store: sessionStore,
+//   resave: false,
+//   saveUninitialized: false,
+//   cookie: {
+//     maxAge: (1825 * 86400 * 1000),
+//     httpOnly: false
+//   }
+// }));
+
+// new Router(app, db);
+// // Send every other request to the React app
 
 // Connect to the Mongo DB
 mongoose.connect(

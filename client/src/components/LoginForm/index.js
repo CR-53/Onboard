@@ -3,6 +3,9 @@ import "./style.css";
 import InputField from "../InputField";
 import SubmitButton from "../SubmitButton";
 import UserStore from "../../stores/UserStore";
+import API from "../../utils/API";
+import { setInStorage } from "../../stores/storage";
+const bcrypt = require('bcryptjs');
 
 class LoginForm extends React.Component {
 
@@ -74,40 +77,40 @@ class LoginForm extends React.Component {
         this.setState({
             buttonDisabled: true
         })
-
-        try {
-            let res = await fetch('/login', {
-                method: 'post',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    username: this.state.username,
-                    password: this.state.password
-                })
-            });
-
-            let result = await res.json();
-            if (result && result.success) {
-                UserStore.isLoggedIn = true;
-                UserStore.username = result.username;
-                window.location.href = '/'
-            }
-
-            else if (result && result.success === false) {
+        const user = this.state.username.toLowerCase()
+        API.getUserByUsername(user).then(res => {
+            if (res.data.length !== 1) {
                 this.setState({
                     noMatch: true
                 })
                 this.resetErrorMessages()
                 this.resetForm();
+                return;
             }
-        }
-
-        catch (e) {
-            console.log(e);
-            this.resetForm();
-        }
+            const userId = res.data[0]._id
+            bcrypt.compare(this.state.password, res.data[0].password, (bcryptErr, verified) => {
+                if (verified) {
+                    API.createUserSession({
+                        userId: userId
+                    }).then(res => {
+                        setInStorage('onboard_login', { token: res.data._id });
+                        UserStore.isLoggedIn = true;
+                        UserStore.username = user;
+                        this.setState({
+                            username: user
+                        })
+                        return;
+                    })
+                }
+                else {
+                    this.setState({
+                        noMatch: true
+                    })
+                    this.resetErrorMessages()
+                    this.resetForm();
+                }
+            });
+        });
     }
 
     render() {

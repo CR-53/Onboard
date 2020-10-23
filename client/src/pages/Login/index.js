@@ -4,63 +4,62 @@ import { observer } from "mobx-react";
 import LoginForm from "../../components/LoginForm";
 import SubmitButton from "../../components/SubmitButton";
 import UserStore from "../../stores/UserStore";
-
+import API from "../../utils/API";
+import { getFromStorage } from "../../stores/storage";
 
 class Login extends React.Component {
 
     async componentDidMount() {
-        try {
-            let res = await fetch('/isLoggedIn', {
-                method: 'post',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            })
-
-            let result = await res.json();
-
-            if (result && result.success) {
-                UserStore.loading = false;
-                UserStore.isLoggedIn = true;
-                UserStore.username = result.username;
-            }
-
-            else {
-                UserStore.loading = false;
-                UserStore.isLoggedIn = false;
-            }
-
+        const obj = getFromStorage('onboard_login');
+        if (obj && obj.token) {
+            const { token } = obj;
+            console.log(token)
+            // Verify token
+            API.findUserSession(
+                token).then(res => {
+                    if (res.data) {
+                        const id = res.data.userId;
+                        console.log(id)
+                        API.getUserById(id).then(res => {
+                            if (res.data) {
+                                UserStore.loading = false;
+                                UserStore.isLoggedIn = true;
+                                UserStore.username = res.data.username;
+                            }
+                            else {
+                                UserStore.loading = false;
+                                UserStore.isLoggedIn = false;
+                            }
+                        })
+                    }
+                    else {
+                        UserStore.loading = false;
+                        UserStore.isLoggedIn = false;
+                    }
+                })
         }
-
-        catch (e) {
+        else {
             UserStore.loading = false;
             UserStore.isLoggedIn = false;
         }
     }
 
     async doLogout() {
-        try {
-            let res = await fetch('/logout', {
-                method: 'post',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+        const obj = getFromStorage('onboard_login');
+        if (obj && obj.token) {
+            const { token } = obj;
+            console.log(token)
+            // Delete session
+            API.deleteUserSession(token).then(res => {
+                if (res.data) {
+                    UserStore.isLoggedIn = false;
+                    UserStore.username = '';
+                    window.location.href = '/'
                 }
             })
-
-            let result = await res.json();
-
-            if (result && result.success) {
-                UserStore.isLoggedIn = false;
-                UserStore.username = '';
-                window.location.href='/'
-            }
-
         }
-
-        catch (e) {
-            console.log(e);
+        else {
+            console.log(`could not retrieve token`)
         }
     }
 
@@ -88,7 +87,7 @@ class Login extends React.Component {
                                     <a href="/"><SubmitButton
                                         text={"Log out"}
                                         disabled={false}
-                                        onClick={ () => this.doLogout() }
+                                        onClick={() => this.doLogout()}
                                     /></a>
                                 </div>
                             </div>

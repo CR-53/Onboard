@@ -12,6 +12,8 @@ import SuggestionButton from "../SuggestionButton";
 import API from "../../utils/API";
 import AnchorLink from 'react-anchor-link-smooth-scroll';
 import { Button, Dropdown, Modal } from 'react-bootstrap';
+import { getFromStorage } from "../../stores/storage";
+const bcrypt = require('bcryptjs');
 
 class Board extends React.Component {
 
@@ -56,59 +58,69 @@ class Board extends React.Component {
     }
 
     async componentDidMount() {
-        try {
-            let res = await fetch('/isLoggedIn', {
-                method: 'post',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            })
-
-            let result = await res.json();
-
-            if (result && result.success) {
-                UserStore.loading = false;
-                UserStore.isLoggedIn = true;
-                UserStore.username = result.username;
-                this.setState({
-                    owner: UserStore.username
+        const obj = getFromStorage('onboard_login');
+        if (obj && obj.token) {
+            const { token } = obj;
+            // Verify token
+            API.findUserSession(
+                token).then(res => {
+                    if (res.data) {
+                        const id = res.data.userId;
+                        API.getUserById(id).then(res => {
+                            if (res.data) {
+                                UserStore.loading = false;
+                                UserStore.isLoggedIn = true;
+                                UserStore.username = res.data.username;
+                                this.setState({
+                                    owner: UserStore.username
+                                })
+                            }
+                            else {
+                                UserStore.loading = false;
+                                UserStore.isLoggedIn = false;
+                            }
+                        })
+                    }
+                    else {
+                        UserStore.loading = false;
+                        UserStore.isLoggedIn = false;
+                    }
                 })
-            }
-
-            else {
-                UserStore.loading = false;
-                UserStore.isLoggedIn = false;
-            }
-            const slug = this.props.match.params.id;
-            API.getBoardBySlug(slug).then(res => {
-                this.setState({
-                    loading: false,
-                    boardTitle: res.data[0].title,
-                    boardDescription: res.data[0].description,
-                    boardOwner: res.data[0].owner,
-                    boardID: res.data[0]._id
-                })
-                if (this.state.owner === res.data[0].owner) {
-                    this.setState({
-                        adminDisplay: true
-                    })
-                }
-                API.getSuggestionsByBoardID(res.data[0]._id).then(res => {
-                    this.setState({
-                        suggestions: res.data
-                    })
-                })
-            })
-            this.setState({
-                loading: false
-            })
         }
-
-        catch (e) {
+        else {
             UserStore.loading = false;
             UserStore.isLoggedIn = false;
         }
+        const slug = this.props.match.params.id;
+        API.getBoardBySlug(slug).then(res => {
+            this.setState({
+                loading: false,
+                boardTitle: res.data[0].title,
+                boardDescription: res.data[0].description,
+                boardOwner: res.data[0].owner,
+                boardID: res.data[0]._id
+            })
+
+            API.getSuggestionsByBoardID(res.data[0]._id).then(res => {
+                this.setState({
+                    suggestions: res.data
+                })
+            })
+        })
+        this.checkAdmin()
+        this.setState({
+            loading: false
+        })
+    }
+
+    async checkAdmin() {
+        setTimeout(() => {
+            if (this.state.owner === this.state.boardOwner) {
+                this.setState({
+                    adminDisplay: true
+                })
+            }
+        }, 500)
     }
 
     async loadBoardData(slug) {
@@ -374,43 +386,31 @@ class Board extends React.Component {
             this.resetErrorMessages()
             return;
         }
-
-        try {
-            let res = await fetch('/login', {
-                method: 'post',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    username: this.state.owner,
-                    password: this.state.password
-                })
-            });
-
-            let result = await res.json();
-
-            if (result && result.success) {
-                API.deleteBoard(this.state.boardID)
-                    .catch(err => console.log(err))
-                    .then(() => {
-                        window.location.href = '/board-deleted'
-                    })
-            }
-
-            else if (result && result.success === false) {
+        const user = this.state.owner
+        API.getUserByUsername(user).then(res => {
+            if (res.data.length !== 1) {
                 this.setState({
                     deleteBoardPasswordNoMatch: true
                 })
                 this.resetDeleteForm();
                 this.resetErrorMessages()
+                return;
             }
-        }
-
-        catch (e) {
-            console.log(e);
-            this.resetDeleteForm();
-        }
+            const userId = res.data[0]._id
+            bcrypt.compare(this.state.password, res.data[0].password, (bcryptErr, verified) => {
+                if (verified) {
+                    API.deleteBoard(this.state.boardID)
+                        .catch(err => console.log(err))
+                        .then(() => {
+                            window.location.href = '/board-deleted'
+                        })
+                }
+                else {
+                    console.log(`error`);
+                    this.resetDeleteForm();
+                }
+            })
+        })
     }
 
     async resetDeleteForm() {

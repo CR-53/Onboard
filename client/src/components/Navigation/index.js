@@ -7,40 +7,43 @@ import logo from "../../assets/images/logo.png";
 import { observer } from "mobx-react";
 import UserStore from "../../stores/UserStore";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import API from "../../utils/API";
+import { getFromStorage } from "../../stores/storage";
 
 // Depending on the current path, this component sets the "active" class on the appropriate navigation link item
 class Navigation extends React.Component {
 
     async componentDidMount() {
-      try {
-          let res = await fetch('/isLoggedIn', {
-              method: 'post',
-              headers: {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json'
-              }
-          })
-  
-          let result = await res.json();
-  
-          if (result && result.success) {
-              UserStore.loading = false;
-              UserStore.isLoggedIn = true;
-              UserStore.username = result.username;
-          }
-  
-          else {
-              UserStore.loading = false;
-              UserStore.isLoggedIn = false;
-          }
-  
-      }
-  
-      catch (e) {
-          UserStore.loading = false;
-          UserStore.isLoggedIn = false;
-      }
-      
+        const obj = getFromStorage('onboard_login');
+        if (obj && obj.token) {
+            const { token } = obj;
+            // Verify token
+            API.findUserSession(
+                token).then(res => {
+                    if (res.data) {
+                        const id = res.data.userId;
+                        API.getUserById(id).then(res => {
+                            if (res.data) {
+                                UserStore.loading = false;
+                                UserStore.isLoggedIn = true;
+                                UserStore.username = res.data.username;
+                            }
+                            else {
+                                UserStore.loading = false;
+                                UserStore.isLoggedIn = false;
+                            }
+                        })
+                    }
+                    else {
+                        UserStore.loading = false;
+                        UserStore.isLoggedIn = false;
+                    }
+                })
+        }
+        else {
+            UserStore.loading = false;
+            UserStore.isLoggedIn = false;
+        }
     }
 
     render() {

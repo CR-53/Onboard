@@ -16,67 +16,64 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { fab } from '@fortawesome/free-brands-svg-icons'
 import { faChartLine, faCog, faComments, faPencilRuler, faCaretUp, faCaretDown, faEllipsisV, faSort, faUser  } from '@fortawesome/free-solid-svg-icons'
 import Board from "./components/Board";
+import API from "../src/utils/API";
+import { getFromStorage } from "../src/stores/storage";
 
 library.add(fab, faChartLine, faCog, faComments, faPencilRuler, faCaretUp, faCaretDown, faEllipsisV, faSort, faUser)
 
 class App extends React.Component {
 
-  async componentDidMount() {
-    try {
-        let res = await fetch('/isLoggedIn', {
-            method: 'post',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        })
-
-        let result = await res.json();
-
-        if (result && result.success) {
-            UserStore.loading = false;
-            UserStore.isLoggedIn = true;
-            UserStore.username = result.username;
+    async componentDidMount() {
+        const obj = getFromStorage('onboard_login');
+        if (obj && obj.token) {
+            const { token } = obj;
+            // Verify token
+            API.findUserSession(
+                token).then(res => {
+                    if (res.data) {
+                        const id = res.data.userId;
+                        API.getUserById(id).then(res => {
+                            if (res.data) {
+                                UserStore.loading = false;
+                                UserStore.isLoggedIn = true;
+                                UserStore.username = res.data.username;
+                            }
+                            else {
+                                UserStore.loading = false;
+                                UserStore.isLoggedIn = false;
+                            }
+                        })
+                    }
+                    else {
+                        UserStore.loading = false;
+                        UserStore.isLoggedIn = false;
+                    }
+                })
         }
-
         else {
             UserStore.loading = false;
             UserStore.isLoggedIn = false;
         }
-
     }
 
-    catch (e) {
-        UserStore.loading = false;
-        UserStore.isLoggedIn = false;
+    async doLogout() {
+        const obj = getFromStorage('onboard_login');
+        if (obj && obj.token) {
+            const { token } = obj;
+            console.log(token)
+            // Delete session
+            API.deleteUserSession(token).then(res => {
+                if (res.data) {
+                    UserStore.isLoggedIn = false;
+                    UserStore.username = '';
+                    window.location.href = '/'
+                }
+            })
+        }
+        else {
+            console.log(`could not retrieve token`)
+        }
     }
-    
-  }
-
-  async doLogout() {
-      try {
-          let res = await fetch('/logout', {
-              method: 'post',
-              headers: {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json'
-              }
-          })
-
-          let result = await res.json();
-
-          if (result && result.success) {
-              UserStore.isLoggedIn = false;
-              UserStore.username = '';
-              window.location.href='/'
-          }
-
-      }
-
-      catch (e) {
-          console.log(e);
-      }
-  }
 
   render() {
     return (

@@ -54,4 +54,22 @@ export default {
   deleteSuggestion: function(id) {
     return axios.delete("/api/suggestions/" + id);
   },
+  getUserByUsername: function(user) {
+    return axios.get("/api/users/" + user)
+  },
+  createUser: function(userData) {
+    return axios.post("/api/users", userData)
+  },
+  getUserById: function(id) {
+    return axios.get("/api/users/id/" + id);
+  },
+  createUserSession: function(sessionData) {
+    return axios.post("/api/usersessions", sessionData)
+  },
+  findUserSession: function(id) {
+    return axios.get("/api/usersessions/" + id)
+  },
+  deleteUserSession: function(id) {
+    return axios.delete("/api/usersessions/" + id)
+  }
 };

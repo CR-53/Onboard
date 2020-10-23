@@ -1,5 +1,4 @@
 const bcrypt = require('bcrypt');
-const db = require("../models");
 
 class Router {
 
@@ -27,19 +26,24 @@ class Router {
             }
 
             let cols = [username];
-            db.User.findOne({
-                username: cols
-            }).then(res => {
+            db.query('SELECT * FROM user WHERE username = ? LIMIT 1', cols, (err, data, fields) => {
+                if (err) {
+                    res.json({
+                        success: false,
+                        msg: 'An error occured, please try again.'
+                    });
+                    return;
+                }
                 // Found 1 user with this username
-                if (res.data && res.data.length === 1) {
+                if (data && data.length === 1) {
 
-                    bcrypt.compare(password, res.data[0].password, (bcryptErr, verified) => {
+                    bcrypt.compare(password, data[0].password, (bcryptErr, verified) => {
                         if (verified) {
-                            req.session.userID = res.data[0].id;
+                            req.session.userID = data[0].id;
 
                             res.json({
                                 success: true,
-                                username: res.data[0].username
+                                username: data[0].username
                             })
                             return;
                         }
@@ -59,7 +63,8 @@ class Router {
                     })
                 }
 
-            })
+            });
+
         });
 
     }

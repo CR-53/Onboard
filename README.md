@@ -1,29 +1,43 @@
-# Create React Express App
+# Onboard
 
-## About This Boilerplate
+## Description
+Suggestion board app for developers to gauge feedback from their audience  
 
-This setup allows for a Node/Express/React app which can be easily deployed to Heroku.
+[Live App](https://onboard-suggestions.herokuapp.com/)
+![Example Board](/client/src/assets/board-screenshot.png)
 
-The front-end React app will auto-reload as it's updated via webpack dev server, and the backend Express app will auto-reload independently with nodemon.
+![License badge](https://img.shields.io/badge/license-MIT-green)
 
-## Starting the app locally
 
-Start by installing front and backend dependencies. While in this directory, run the following command:
+## Table of Contents
+1. [Installation](#Installation)
+2. [Usage](#Usage)
+3. [License](#License)
+4. [Contribution](#Contribution)
+5. [Questions](#Questions)
 
-```
-npm install
-```
 
-This should install node modules within the server and the client folder.
+## Installation
+None
 
-After both installations complete, run the following command in your terminal:
 
-```
-npm start
-```
+## Usage
+This app is available to use via Heroku: https://onboard-suggestions.herokuapp.com/
 
-Your app should now be running on <http://localhost:3000>. The Express server should intercept any AJAX requests from the client.
 
-## Deployment (Heroku)
+## License
+MIT</br> 
+![License badge](https://img.shields.io/badge/license-MIT-green) 
 
-To deploy, simply add and commit your changes, and push to Heroku. As is, the NPM scripts should take care of the rest.
+
+## Contribution
+Not open for contributions.
+
+
+## Tests
+None
+
+
+## Questions
+You can view my GitHub profile here: https://github.com/CR-53</br>
+If you have any questions, feel free to send me an email: chrisroschi53@gmail.com

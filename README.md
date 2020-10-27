@@ -4,7 +4,7 @@
 Suggestion board app for developers to gauge feedback from their audience  
 
 [Live App](https://onboard-suggestions.herokuapp.com/)
-![Example Board](client/src/assets/board-screenshot.png)
+![Example Board](client/src/assets/images/board-screenshot.png)
 
 ![License badge](https://img.shields.io/badge/license-MIT-green)
 
